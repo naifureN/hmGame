@@ -2,9 +2,7 @@
 //Funs
 
 void Game::initWindow() {
-	sf::VideoMode fullscreenMode = sf::VideoMode::getFullscreenModes()[0];
-	this->videoMode = fullscreenMode;
-	this->window = new sf::RenderWindow(this->videoMode, "Project", sf::Style::Fullscreen);
+	this->window = new sf::RenderWindow(sf::VideoMode(1280,720), "Horda Kurwiu");
 	this->window->setFramerateLimit(60);
 }
 
@@ -26,6 +24,8 @@ void Game::pollEvents() {
 					this->window->close();
 				}
 				break;
+			case Event::Closed:
+				this->window->close();
 		}
 		
 	}

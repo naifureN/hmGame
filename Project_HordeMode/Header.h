@@ -7,7 +7,6 @@
 #include"Player.h"
 
 class Game {
-	sf::VideoMode videoMode;
 	sf::RenderWindow* window;
 	sf::Event evnt;
 	bool endGame;
