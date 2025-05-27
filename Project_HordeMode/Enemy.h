@@ -1,19 +1,17 @@
 #pragma once
-#include"Header.h"
-#include"Player.h"
+#include "includes.h"
+using namespace sf;
 class Enemy
 {
-	sf::RectangleShape shape;
-
+	Sprite sprite;
 	float movespeed;
 
-	void initVars();
-	void initShape();
+	//virtual void initVars() = 0;
+	//virtual void initShape() = 0;
 public:
-	Enemy();
+	Enemy(Texture* tex);
 	~Enemy();
-
-	void update(sf::RenderTarget* target);
+	//virtual void update(sf::RenderTarget* target) = 0;
 	void render(sf::RenderTarget* target);
 };
 

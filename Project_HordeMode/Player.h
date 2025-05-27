@@ -1,17 +1,12 @@
 #pragma once
-
-#include <SFML/Graphics.hpp>
-#include <SFML/System.hpp>
-#include <SFML/Window.hpp>
-#include <SFML/Audio.hpp>
-#include <SFML/Network.hpp>
+#include "includes.h"
 #include <math.h>
-using namespace sf;
+
 class Player
 {
 private:
-	sf::RectangleShape shape;
-
+	Texture texture;
+	Sprite shape;
 	float movespeed;
 	Vector2f direction;
 

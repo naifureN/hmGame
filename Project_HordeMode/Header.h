@@ -1,10 +1,8 @@
 #pragma once
-#include <SFML/Graphics.hpp>
-#include <SFML/System.hpp>
-#include <SFML/Window.hpp>
-#include <SFML/Audio.hpp>
-#include <SFML/Network.hpp>
+#include "includes.h"
 #include"Player.h"
+#include "Enemy.h"
+#include "Spawner.h"
 
 class Game {
 	sf::RenderWindow* window;
@@ -12,6 +10,7 @@ class Game {
 	bool endGame;
 
 	Player player;
+	Spawner spawner;
 
 	void initWindow();
 	void initVars();

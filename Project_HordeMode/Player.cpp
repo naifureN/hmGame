@@ -1,20 +1,17 @@
 ﻿#include "Player.h"
 #include <iostream>
-void Player::initVars()
-{
+void Player::initVars(){
 	this->movespeed = 5.f;
 	this->direction = Vector2f(0, 0);
 }
 
 void Player::initShape() {
-	this->shape.setFillColor(sf::Color::Green);
-	this->shape.setSize(sf::Vector2f(100.f, 200.f));
+	this->texture.loadFromFile("gfx/player.png");
+	this->shape.setTexture(this->texture);
 }
 
 Player::Player(float x, float y) {
-
 	this->shape.setPosition(x, y);
-
 	this->initVars();
 	this->initShape();
 }
@@ -46,6 +43,7 @@ void Player::updateInput() {
 	}
 	this->direction = normalize_vector(this->direction.x, this->direction.y);
 	shape.setPosition(operator+(shape.getPosition(), operator*(this->direction, this->movespeed)));
+	std::cout << shape.getPosition().x << ", " << shape.getPosition().y << std::endl;
 }
 
 void Player::updateWindowBoundsCollision(sf::RenderTarget* target) {

@@ -1,4 +1,5 @@
 #include"Header.h"
+using namespace sf;
 //Funs
 
 void Game::initWindow() {
@@ -23,6 +24,10 @@ void Game::pollEvents() {
 				if (this->evnt.key.code == sf::Keyboard::Escape) {
 					this->window->close();
 				}
+				if (this->evnt.key.code == sf::Keyboard::Space) {
+					this->spawner.spawn();
+				}
+
 				break;
 			case Event::Closed:
 				this->window->close();
@@ -32,7 +37,6 @@ void Game::pollEvents() {
 }
 
 //Cons and Destrs
-
 Game::Game() {
 	this->initWindow();
 }
@@ -44,11 +48,12 @@ Game::~Game(){
 void Game::update() {
 	this->pollEvents();
 	this->player.update(this->window);
+
 }
 
 void Game::render() {
 	this->window->clear();
-
 	this->player.render(this->window);
+	this->spawner.renderEnemies(this->window);
 	this->window->display();
 }
