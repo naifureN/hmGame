@@ -144,6 +144,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Bullet.cpp" />
     <ClCompile Include="Enemy.cpp" />
     <ClCompile Include="Header.h" />
     <ClCompile Include="Player.cpp" />
@@ -152,12 +153,14 @@
     <ClCompile Include="Spawner.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Bullet.h" />
     <ClInclude Include="Enemy.h" />
     <ClInclude Include="includes.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="Spawner.h" />
   </ItemGroup>
   <ItemGroup>
+    <Image Include="..\..\..\..\Downloads\bullet.png" />
     <Image Include="gfx\enemy.png" />
     <Image Include="gfx\player.png" />
   </ItemGroup>

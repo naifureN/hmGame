@@ -1,8 +1,9 @@
 #pragma once
 #include "includes.h"
-#include"Player.h"
+#include "Player.h"
 #include "Enemy.h"
 #include "Spawner.h"
+#include "Bullet.h"
 
 class Game {
 	sf::RenderWindow* window;
@@ -11,6 +12,9 @@ class Game {
 
 	Player player;
 	Spawner spawner;
+	std::vector<Bullet>bullets;
+	Clock shootClock;
+	float shootDelay;
 
 	void initWindow();
 	void initVars();
@@ -24,4 +28,7 @@ public:
 
 	void update();
 	void render();
+
+	void shoot();
+	void updateBullets();
 };
