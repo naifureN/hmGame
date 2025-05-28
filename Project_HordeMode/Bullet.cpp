@@ -1,22 +1,19 @@
 #include "Bullet.h"
 
-Bullet::Bullet() {
+Bullet::Bullet(Texture* bulletTexture, Vector2f playerPos, Vector2f mousepos){
+	this->texture = bulletTexture;
+	this->sprite.setTexture(*texture);
 	this->initVars();
-	this->initShape();
+	this->setPosition(playerPos);
+	this->setTarget(playerPos, mousepos);
 }
 
-Bullet::~Bullet() {
-
-}
+Bullet::~Bullet() {}
 
 void Bullet::initVars() {
 	this->speed = 10.f;
 }
 
-void Bullet::initShape() {
-	this->texture.loadFromFile("gfx/bullet.png");
-	this->sprite.setTexture(this->texture);
-}
 
 void Bullet::render(RenderTarget* target) {
 	target->draw(this->sprite);
@@ -24,6 +21,7 @@ void Bullet::render(RenderTarget* target) {
 
 void Bullet::update() {
 	sprite.move(velocity);
+
 }
 
 void Bullet::setTarget(const Vector2f& playerpos, const Vector2f& mousepos) {

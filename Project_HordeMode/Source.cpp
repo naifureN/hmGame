@@ -10,6 +10,7 @@ void Game::initWindow() {
 void Game::initVars() {
 	this->endGame = false;
 	this->shootDelay = 0.001f;
+	std::cout<<this->bulletTexture.loadFromFile("bullet.png");
 }
 
 const bool Game::running() const {
@@ -28,8 +29,6 @@ void Game::pollEvents() {
 			if (this->evnt.key.code == sf::Keyboard::Space) {
 				this->spawner.spawn();
 			}
-
-
 			break;
 		case sf::Event::MouseButtonPressed:
 			if (evnt.mouseButton.button == Mouse::Left)
@@ -39,8 +38,7 @@ void Game::pollEvents() {
 			break;
 		case Event::Closed:
 			this->window->close();
-	
-			
+			break;
 		}
 		
 	}
@@ -49,6 +47,7 @@ void Game::pollEvents() {
 //Cons and Destrs
 Game::Game() {
 	this->initWindow();
+	this->initVars();
 }
 
 Game::~Game(){
@@ -76,10 +75,7 @@ void Game::render() {
 void Game::shoot() {
 	if (shootClock.getElapsedTime().asSeconds() >= shootDelay) {
 		Vector2i mousepos = Mouse::getPosition(*window);
-		Bullet nBullet;
-		nBullet.setPosition(player.getPos());
-		nBullet.setTarget(player.getPos(), Vector2f(mousepos));
-		bullets.push_back(nBullet);
+		bullets.emplace_back(&bulletTexture, player.getPos(), Vector2f(mousepos));
 		shootClock.restart();
 	}
 }

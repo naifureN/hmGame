@@ -9,7 +9,7 @@ class Game {
 	sf::RenderWindow* window;
 	sf::Event evnt;
 	bool endGame;
-
+	Texture bulletTexture;
 	Player player;
 	Spawner spawner;
 	std::vector<Bullet>bullets;

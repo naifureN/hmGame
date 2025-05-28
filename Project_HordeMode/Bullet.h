@@ -1,17 +1,15 @@
 #pragma once
 #include"includes.h"
 class Bullet {
-
-	Texture texture;
+	Texture* texture;
 	Sprite sprite;
 	float speed;
 	Vector2f velocity;
 
 	void initVars();
-	void initShape();
 
 public:
-	Bullet();
+	Bullet(Texture* bulletTexture, Vector2f playerPos, Vector2f mousepos);
 	~Bullet();
 
 	void setPosition(const Vector2f& pos);

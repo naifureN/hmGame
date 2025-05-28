@@ -33,6 +33,9 @@
     <ClCompile Include="Spawner.cpp">
       <Filter>Pliki źródłowe</Filter>
     </ClCompile>
+    <ClCompile Include="Bullet.cpp">
+      <Filter>Pliki źródłowe</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Player.h">
@@ -47,12 +50,18 @@
     <ClInclude Include="includes.h">
       <Filter>Pliki nagłówkowe</Filter>
     </ClInclude>
+    <ClInclude Include="Bullet.h">
+      <Filter>Pliki nagłówkowe</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="gfx\player.png">
       <Filter>Pliki zasobów</Filter>
     </Image>
     <Image Include="gfx\enemy.png">
+      <Filter>Pliki zasobów</Filter>
+    </Image>
+    <Image Include="gfx\bullet.png">
       <Filter>Pliki zasobów</Filter>
     </Image>
   </ItemGroup>

@@ -43,7 +43,6 @@ void Player::updateInput() {
 	}
 	this->direction = normalize_vector(this->direction.x, this->direction.y);
 	shape.setPosition(operator+(shape.getPosition(), operator*(this->direction, this->movespeed)));
-	std::cout << shape.getPosition().x << ", " << shape.getPosition().y << std::endl;
 }
 
 void Player::updateWindowBoundsCollision(sf::RenderTarget* target) {

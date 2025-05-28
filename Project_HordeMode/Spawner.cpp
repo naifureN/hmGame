@@ -7,7 +7,6 @@ Spawner::~Spawner(){}
 
 void Spawner::spawn() {
     enemies.emplace_back(&EnemyTexture);
-    std::cout << "piwerko";
 }
 
 //void Spawner::updateEnemies(RenderWindow* window) {

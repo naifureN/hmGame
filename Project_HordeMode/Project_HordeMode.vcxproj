@@ -160,7 +160,7 @@
     <ClInclude Include="Spawner.h" />
   </ItemGroup>
   <ItemGroup>
-    <Image Include="..\..\..\..\Downloads\bullet.png" />
+    <Image Include="gfx\bullet.png" />
     <Image Include="gfx\enemy.png" />
     <Image Include="gfx\player.png" />
   </ItemGroup>
