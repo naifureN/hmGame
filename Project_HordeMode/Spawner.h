@@ -1,8 +1,6 @@
 #pragma once
 #include "includes.h"
 #include "Enemy.h"
-#include <vector>
-#include <iostream>
 using namespace sf;
 class Spawner {
 	Texture EnemyTexture;
@@ -14,5 +12,6 @@ public:
 	void spawn();
 	//void updateEnemies(RenderWindow* window);
 	void renderEnemies(RenderWindow* window); 
+	std::vector<Enemy>& getEnemies();
 };
 

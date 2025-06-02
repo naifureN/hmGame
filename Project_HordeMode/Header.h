@@ -1,9 +1,9 @@
 #pragma once
 #include "includes.h"
-#include "Player.h"
-#include "Enemy.h"
-#include "Spawner.h"
-#include "Bullet.h"
+#include"Player.h"
+#include"Spawner.h"
+#include"Bullet.h"
+
 
 class Game {
 	sf::RenderWindow* window;
@@ -31,4 +31,5 @@ public:
 
 	void shoot();
 	void updateBullets();
+	bool isBulletOut(const Bullet& bullet) const;
 };

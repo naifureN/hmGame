@@ -81,7 +81,36 @@ void Game::shoot() {
 }
 
 void Game::updateBullets() {
-	for (auto& bullet : bullets) {
-		bullet.update();
+	for (size_t i = 0; i < bullets.size();) {
+		bullets[i].update();
+
+		bool bulletHit = false;
+		auto& enemies = spawner.getEnemies();
+		for (size_t j = 0; j < enemies.size();) {
+			if (bullets[i].getGlobalBounds().intersects(enemies[j].getBounds())) {
+				enemies[j].takeDamage(bullets[i].getDamage());
+				bulletHit = true;
+
+				if (enemies[j].isDead()) {
+					enemies.erase(enemies.begin() + j);
+					continue;
+				}
+			}
+			
+			j++;
+			
+		}
+
+		if (bulletHit||isBulletOut(bullets[i])) {
+			bullets.erase(bullets.begin() + i);
+		}
+		else {
+			i++;
+		}
 	}
+}
+
+bool Game::isBulletOut(const Bullet& bullet) const {
+	auto bounds = bullet.getGlobalBounds();
+	return (bounds.left + bounds.width<0 || bounds.left>window->getSize().x || bounds.top + bounds.height<0 || bounds.top>window->getSize().y);
 }

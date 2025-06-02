@@ -1,6 +1,6 @@
 #include "Bullet.h"
 
-Bullet::Bullet(Texture* bulletTexture, Vector2f playerPos, Vector2f mousepos){
+Bullet::Bullet(Texture* bulletTexture, Vector2f playerPos, Vector2f mousepos): damage(25){
 	this->texture = bulletTexture;
 	this->sprite.setTexture(*texture);
 	this->initVars();
@@ -45,4 +45,8 @@ const Vector2f& Bullet::getPos() const {
 
 FloatRect Bullet::getGlobalBounds() const {
 	return sprite.getGlobalBounds();
+}
+
+int Bullet::getDamage() const {
+	return damage;
 }

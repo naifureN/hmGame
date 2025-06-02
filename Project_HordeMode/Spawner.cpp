@@ -15,6 +15,13 @@ void Spawner::spawn() {
 //}
 
 void Spawner::renderEnemies(RenderWindow* window) {
-    for (auto& e : enemies)
+    for (auto& e : enemies) {
+
         e.render(window);
+    }
+}
+
+std::vector<Enemy>& Spawner::getEnemies()
+{
+    return enemies;
 }

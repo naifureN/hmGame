@@ -5,6 +5,7 @@ class Bullet {
 	Sprite sprite;
 	float speed;
 	Vector2f velocity;
+	int damage;
 
 	void initVars();
 
@@ -19,6 +20,7 @@ public:
 
 	void update();
 	void render(RenderTarget* target);
+	int getDamage() const;
 
 };
 
