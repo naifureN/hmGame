@@ -69,8 +69,6 @@ void Player::updateWindowBoundsCollision(sf::RenderTarget* target) {
 }
 //losowy komentarz ¿eby by³y zmiany
 void Player::update(sf::RenderTarget* target) {
-
-
 	this->updateInput();
 	this->updateWindowBoundsCollision(target);
 }

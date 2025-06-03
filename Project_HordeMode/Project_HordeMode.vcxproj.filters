@@ -65,4 +65,9 @@
       <Filter>Pliki zasobów</Filter>
     </Image>
   </ItemGroup>
+  <ItemGroup>
+    <Font Include="gfx\Symtext.ttf">
+      <Filter>Pliki zasobów</Filter>
+    </Font>
+  </ItemGroup>
 </Project>

@@ -4,14 +4,13 @@
 using namespace sf;
 class Spawner {
 	Texture EnemyTexture;
-	std::vector<Enemy> enemies;
+	std::vector<std::unique_ptr<Enemy>> enemies;
 public:
 	Spawner();
 	~Spawner();
-
 	void spawn();
-	//void updateEnemies(RenderWindow* window);
+	void updateEnemies();
 	void renderEnemies(RenderWindow* window); 
-	std::vector<Enemy>& getEnemies();
+	std::vector<std::unique_ptr<Enemy>>& getEnemies();
 };
 

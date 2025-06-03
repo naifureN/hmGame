@@ -8,9 +8,10 @@ void Enemy::render(sf::RenderTarget* target) {
 }
 Enemy::Enemy(Texture* tex): hp(100), maxHp(100) {
 	this->sprite.setTexture(*tex);
-	this->sprite.setPosition(100, 200);
-	hpBarBackground.setPosition(100, 190);
-	hpBarFill.setPosition(100,190); // x te same a y-10 jest ideolo
+	int rx = rand() % 500 + 40;
+	this->sprite.setPosition(Vector2f(rx, 100));
+	hpBarBackground.setPosition(sprite.getPosition());
+	hpBarFill.setPosition(sprite.getPosition()); // x te same a y-10 jest ideolo
 
 	hpBarBackground.setSize(Vector2f(32.f, 5.f));
 	hpBarBackground.setFillColor(Color(50, 50, 50));
@@ -54,4 +55,44 @@ void Enemy::updateHpBar() {
 	else if (hpPercent < 0.6) {
 		hpBarFill.setFillColor(Color(255, 165, 0));
 	}
+}
+
+void Enemy::update() {
+	//this->sprite.move(Vector2f(3, 0));
+	hpBarBackground.setPosition(this->sprite.getPosition().x, this->sprite.getPosition().y-10);
+	hpBarFill.setPosition(this->sprite.getPosition().x, this->sprite.getPosition().y - 10);
+}
+void Enemy::setAttackSpeed(float x) {
+	attackSpeed = x;
+}
+float Enemy::getAttackSpeed() {
+	return attackSpeed;
+}
+
+void Enemy::setHP(int x) {
+	hp = x;
+	maxHp = x;
+}
+
+void Enemy::setSpriteColor() {
+	sprite.setColor(Color::Red);
+}
+
+void StandardEnemy::initVars() {
+	setAttackSpeed(2.1);
+	setHP(100);
+}
+
+StandardEnemy::StandardEnemy(Texture* tex) : Enemy(tex){
+	initVars();
+}
+
+void TankEnemy::initVars() {
+	setAttackSpeed(4.0);
+	setHP(200);
+}
+
+TankEnemy::TankEnemy(Texture* tex) : Enemy(tex) {
+	initVars();
+	setSpriteColor();
 }
