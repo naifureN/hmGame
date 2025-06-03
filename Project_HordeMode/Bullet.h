@@ -1,7 +1,7 @@
 #pragma once
 #include"includes.h"
 class Bullet {
-	Texture* texture;
+	//Texture* texture;
 	Sprite sprite;
 	float speed;
 	Vector2f velocity;
@@ -10,7 +10,8 @@ class Bullet {
 	void initVars();
 
 public:
-	Bullet(Texture* bulletTexture, Vector2f playerPos, Vector2f mousepos);
+	Bullet(const Texture& bulletTexture, Vector2f playerPos, Vector2f mousepos);
+	Bullet() = delete;
 	~Bullet();
 
 	void setPosition(const Vector2f& pos);

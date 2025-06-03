@@ -1,14 +1,17 @@
 #include "Bullet.h"
 
-Bullet::Bullet(Texture* bulletTexture, Vector2f playerPos, Vector2f mousepos): damage(25){
-	this->texture = bulletTexture;
-	this->sprite.setTexture(*texture);
+Bullet::Bullet(const Texture& bulletTexture, Vector2f playerPos, Vector2f mousepos): damage(25){
+	this->sprite.setTexture(bulletTexture);
 	this->initVars();
 	this->setPosition(playerPos);
 	this->setTarget(playerPos, mousepos);
 }
 
-Bullet::~Bullet() {}
+Bullet::~Bullet() {
+	if (sprite.getTexture() == nullptr) {
+		std::cout << "Destruktor Bullet: sprite bez tekstury" << std::endl;
+	}
+}
 
 void Bullet::initVars() {
 	this->speed = 10.f;
@@ -16,6 +19,10 @@ void Bullet::initVars() {
 
 
 void Bullet::render(RenderTarget* target) {
+	if (sprite.getTexture() == nullptr) {
+		std::cout << "WARNING: sprite ma nullptr tekstury w destrukcji!" << std::endl;
+		return;
+	}
 	target->draw(this->sprite);
 }
 

@@ -6,15 +6,16 @@
 
 
 class Game {
-	sf::RenderWindow* window;
+	sf::RenderWindow window;
 	sf::Event evnt;
 	bool endGame;
+	std::vector<std::unique_ptr<Bullet>> bullets;
 	Texture bulletTexture;
 	Player player;
 	Spawner spawner;
-	std::vector<Bullet>bullets;
 	Clock shootClock;
 	float shootDelay;
+	bool runningbool = true;
 
 	void initWindow();
 	void initVars();
