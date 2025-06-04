@@ -6,7 +6,7 @@ Spawner::Spawner() {
 Spawner::~Spawner(){}
 
 void Spawner::spawn() {
-    int r = rand() % 2;
+    int r = rand() % 3;
     switch (r) {
     case 0:
         enemies.emplace_back(std::make_unique<StandardEnemy>(&EnemyTexture));
@@ -14,13 +14,16 @@ void Spawner::spawn() {
     case 1:
         enemies.emplace_back(std::make_unique<TankEnemy>(&EnemyTexture));
         break;
+    case 2:
+        enemies.emplace_back(std::make_unique<RangeEnemy>(&EnemyTexture));
+        break;
     }
-    
 }
+ 
 
-void Spawner::updateEnemies() {
+void Spawner::updateEnemies(Vector2f playerpos) {
     for (auto& e : enemies)
-        e->update();
+        e->update(playerpos);
 }
 
 

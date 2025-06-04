@@ -63,7 +63,7 @@ void Game::update() {
 	this->pollEvents();
 	this->player.update(&this->window);
 	updateBullets();
-	this->spawner.updateEnemies();
+	this->spawner.updateEnemies(player.getPos());
 }
 
 void Game::render() {

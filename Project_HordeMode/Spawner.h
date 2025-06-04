@@ -9,7 +9,7 @@ public:
 	Spawner();
 	~Spawner();
 	void spawn();
-	void updateEnemies();
+	void updateEnemies(Vector2f playerpos);
 	void renderEnemies(RenderWindow* window); 
 	std::vector<std::unique_ptr<Enemy>>& getEnemies();
 };

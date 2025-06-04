@@ -57,8 +57,8 @@ void Enemy::updateHpBar() {
 	}
 }
 
-void Enemy::update() {
-	//this->sprite.move(Vector2f(3, 0));
+void Enemy::update(Vector2f playerpos) {
+	moveEnemy(playerpos);
 	hpBarBackground.setPosition(this->sprite.getPosition().x, this->sprite.getPosition().y-10);
 	hpBarFill.setPosition(this->sprite.getPosition().x, this->sprite.getPosition().y - 10);
 }
@@ -74,25 +74,87 @@ void Enemy::setHP(int x) {
 	maxHp = x;
 }
 
-void Enemy::setSpriteColor() {
-	sprite.setColor(Color::Red);
+void Enemy::setSpriteColor(Color c) {
+	sprite.setColor(c);
+}
+
+Vector2f Enemy::getSpritePos() {
+	return sprite.getPosition();
+}
+
+void Enemy::setMovespeed(float x) {
+	movespeed = x;
+}
+
+void Enemy::moveSprite(Vector2f movement) {
+	sprite.move(movement);
+}
+
+float Enemy::getMovespeed() {
+	return movespeed;
 }
 
 void StandardEnemy::initVars() {
-	setAttackSpeed(2.1);
+	setAttackSpeed(2.5f);
 	setHP(100);
+	setMovespeed(3.0f);
 }
 
 StandardEnemy::StandardEnemy(Texture* tex) : Enemy(tex){
 	initVars();
 }
 
+void StandardEnemy::moveEnemy(Vector2f playerpos) {
+	Vector2f direction = playerpos - getSpritePos();
+	float dirLen = sqrtf(direction.x * direction.x + direction.y * direction.y);
+	if (dirLen > 0.0f) {
+		direction = direction / dirLen;
+		moveSprite(direction * getMovespeed());
+	}
+}
+
 void TankEnemy::initVars() {
-	setAttackSpeed(4.0);
+	setAttackSpeed(4.0f);
 	setHP(200);
+	setMovespeed(1.5f);
 }
 
 TankEnemy::TankEnemy(Texture* tex) : Enemy(tex) {
 	initVars();
-	setSpriteColor();
+	setSpriteColor(Color::Red);
+}
+
+void TankEnemy::moveEnemy(Vector2f playerpos) {
+	Vector2f direction = playerpos - getSpritePos();
+	float dirLen = sqrtf(direction.x * direction.x + direction.y * direction.y);
+	if (dirLen > 0.0f) {
+		direction = direction / dirLen;
+		moveSprite(direction * getMovespeed());
+	}
+}
+
+void RangeEnemy::initVars() {
+	setAttackSpeed(2.0f);
+	setHP(75);
+	setMovespeed(2.75f);
+}
+
+RangeEnemy::RangeEnemy(Texture* tex) : Enemy(tex) {
+	initVars();
+	setSpriteColor(Color::Yellow);
+}
+
+void RangeEnemy::moveEnemy(Vector2f playerpos) {
+	Vector2f direction = playerpos - getSpritePos();
+	float dirLen = sqrtf(direction.x * direction.x + direction.y * direction.y);
+	if (dirLen > 0.0f) {
+		direction = direction / dirLen;
+		if (dirLen > 256.0f) {
+			moveSprite(direction * getMovespeed());
+		}
+		else if (dirLen < 220.0f) {
+			moveSprite(direction * -getMovespeed() * 1.42f);
+		}
+	}
+	
 }
