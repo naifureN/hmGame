@@ -10,10 +10,29 @@ void Player::initShape() {
 	this->shape.setTexture(this->texture);
 }
 
-Player::Player(float x, float y) {
+void Player::initHpBar() {
+	
+	playerhpBarBackground.setSize(sf::Vector2f(200.f, 20.f));
+	playerhpBarBackground.setFillColor(sf::Color(50, 50, 50));
+	playerhpBarBackground.setOutlineThickness(2.f);
+	playerhpBarBackground.setOutlineColor(sf::Color::White);
+
+	playerhpBarFill.setSize(sf::Vector2f(200.f, 20.f));
+	playerhpBarFill.setFillColor(sf::Color::Green);
+
+	font.loadFromFile("Font/Symtext.ttf");
+
+	hpText.setFont(font);
+	hpText.setCharacterSize(12);
+	
+}
+
+
+Player::Player(float x, float y) : hp(30), maxHp(100) {
 	this->shape.setPosition(x, y);
 	this->initVars();
 	this->initShape();
+	this->initHpBar();
 }
 
 Player::~Player() {
@@ -73,10 +92,12 @@ void Player::update(sf::RenderTarget* target) {
 
 	this->updateInput();
 	this->updateWindowBoundsCollision(target);
+	this->updateHpbar();
 }
 
 void Player::render(sf::RenderTarget* target) {
 	target->draw(this->shape);
+	
 }
 
 Vector2f Player::normalize_vector(float vecx, float vecy) {
@@ -90,4 +111,48 @@ Vector2f Player::normalize_vector(float vecx, float vecy) {
 
 const Vector2f& Player::getPos() const {
 	return shape.getPosition();
+}
+
+void Player::updateHpbar() {
+	float hpPercent = static_cast<float>(hp) / maxHp;
+	hpPercent = std::clamp(hpPercent, 0.f, 1.f);
+
+	
+	playerhpBarFill.setSize(sf::Vector2f(200.f * hpPercent, 20.f));
+	hpText.setString(std::to_string(hp) + "/" + std::to_string(maxHp));
+
+	if (hpPercent < 0.25f) {
+		playerhpBarFill.setFillColor(sf::Color::Red);
+	}
+	else if (hpPercent < 0.6f) {
+		playerhpBarFill.setFillColor(sf::Color::Yellow);
+	}
+	else {
+		playerhpBarFill.setFillColor(sf::Color::Green);
+	}
+}
+
+void Player::renderHpBar(sf::RenderTarget* target) {
+	
+	sf::Vector2u windowSize = target->getSize();
+	float posX = windowSize.x - playerhpBarBackground.getSize().x - 20.f;
+	float posY = windowSize.y - playerhpBarBackground.getSize().y - 20.f;
+
+	playerhpBarBackground.setPosition(posX, posY);
+	playerhpBarFill.setPosition(posX, posY);
+
+	float posXtext = windowSize.x - 20.f;
+	float posYtext = windowSize.y - 20.f;
+
+	hpText.setPosition(posXtext, posYtext);
+
+	target->draw(playerhpBarBackground);
+	target->draw(playerhpBarFill);
+	/*target->draw(hpText);*/
+}
+
+void Player::takeDamage(int damage) {
+	hp -= damage;
+	hp = std::max(0, hp); // Zabezpieczenie przed ujemnym HP
+	updateHpbar(); // Aktualizuj wygląd paska
 }

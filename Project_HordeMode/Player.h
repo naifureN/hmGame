@@ -9,9 +9,17 @@ private:
 	Sprite shape;
 	float movespeed;
 	Vector2f direction;
+	int hp;
+	int maxHp;
+	RectangleShape playerhpBarBackground;
+	RectangleShape playerhpBarFill;
+	Font font;
+	Text hpText;
 
 	void initVars();
 	void initShape();
+	void initHpBar();
+	void updateHpbar();
 public:
 	Player(float x = 960.f, float y = 540.f);
 	~Player();
@@ -22,4 +30,6 @@ public:
 	void render(sf::RenderTarget* target);
 	Vector2f normalize_vector(float vecx, float vecy);
 	const Vector2f& getPos() const;
+	void renderHpBar(sf::RenderTarget* target);
+	void takeDamage(int damage);
 };

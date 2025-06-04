@@ -71,6 +71,7 @@ void Game::render() {
 	this->player.render(&this->window);
 	this->spawner.renderEnemies(&this->window);
 	for (auto& b : bullets) b->render(&window);
+	this->player.renderHpBar(&this->window);
 	this->window.display();
 
 }
