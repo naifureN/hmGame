@@ -90,8 +90,6 @@ void Player::updateWindowBoundsCollision(sf::RenderTarget* target) {
 }
 
 void Player::update(sf::RenderTarget* target) {
-
-
 	this->updateInput();
 	this->updateWindowBoundsCollision(target);
 	this->updateHpbar();
@@ -156,4 +154,7 @@ void Player::takeDamage(int damage) {
 	hp -= damage;
 	hp = std::max(0, hp); // Zabezpieczenie przed ujemnym HP
 	updateHpbar(); // Aktualizuj wyglÄ…d paska
+  
+const Sprite& Player::getSprite() const {
+	return shape;
 }

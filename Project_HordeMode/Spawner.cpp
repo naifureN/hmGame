@@ -6,22 +6,32 @@ Spawner::Spawner() {
 Spawner::~Spawner(){}
 
 void Spawner::spawn() {
-    enemies.emplace_back(&EnemyTexture);
-}
-
-//void Spawner::updateEnemies(RenderWindow* window) {
-//    for (auto& e : enemies)
-//        e.update(window);
-//}
-
-void Spawner::renderEnemies(RenderWindow* window) {
-    for (auto& e : enemies) {
-
-        e.render(window);
+    int r = rand() % 3;
+    switch (r) {
+    case 0:
+        enemies.emplace_back(std::make_unique<StandardEnemy>(&EnemyTexture));
+        break;
+    case 1:
+        enemies.emplace_back(std::make_unique<TankEnemy>(&EnemyTexture));
+        break;
+    case 2:
+        enemies.emplace_back(std::make_unique<RangeEnemy>(&EnemyTexture));
+        break;
     }
 }
 
-std::vector<Enemy>& Spawner::getEnemies()
-{
+
+void Spawner::updateEnemies(Vector2f playerpos, Sprite playerSprite, Player player) {
+    for (auto& e : enemies)
+        e->update(playerpos, playerSprite, player);
+}
+
+
+void Spawner::renderEnemies(RenderWindow* window) {
+    for (auto& e : enemies)
+        e->render(window);
+}
+
+std::vector<std::unique_ptr<Enemy>>& Spawner::getEnemies() {
     return enemies;
 }

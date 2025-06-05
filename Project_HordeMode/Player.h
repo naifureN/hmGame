@@ -32,4 +32,5 @@ public:
 	const Vector2f& getPos() const;
 	void renderHpBar(sf::RenderTarget* target);
 	void takeDamage(int damage);
+	const Sprite& getSprite() const;
 };
