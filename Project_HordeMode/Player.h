@@ -13,7 +13,7 @@ private:
 	int maxHp;
 	RectangleShape playerhpBarBackground;
 	RectangleShape playerhpBarFill;
-	Font font;
+	static Font font;
 	Text hpText;
 
 	void initVars();

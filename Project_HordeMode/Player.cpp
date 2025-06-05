@@ -1,6 +1,8 @@
 ﻿#include "Player.h"
 #include <iostream>
-void Player::initVars(){
+Font Player::font;
+
+void Player::initVars() {
 	this->movespeed = 5.f;
 	this->direction = Vector2f(0, 0);
 }
@@ -11,7 +13,7 @@ void Player::initShape() {
 }
 
 void Player::initHpBar() {
-	
+
 	playerhpBarBackground.setSize(sf::Vector2f(200.f, 20.f));
 	playerhpBarBackground.setFillColor(sf::Color(50, 50, 50));
 	playerhpBarBackground.setOutlineThickness(2.f);
@@ -20,11 +22,11 @@ void Player::initHpBar() {
 	playerhpBarFill.setSize(sf::Vector2f(200.f, 20.f));
 	playerhpBarFill.setFillColor(sf::Color::Green);
 
-	font.loadFromFile("Font/Symtext.ttf");
+	font.loadFromFile("gfx/Symtext.ttf");
 
 	hpText.setFont(font);
-	hpText.setCharacterSize(12);
-	
+	hpText.setCharacterSize(18);
+	hpText.setString("Piwo");
 }
 
 
@@ -86,7 +88,7 @@ void Player::updateWindowBoundsCollision(sf::RenderTarget* target) {
 
 
 }
-//losowy komentarz ¿eby by³y zmiany
+
 void Player::update(sf::RenderTarget* target) {
 
 
@@ -97,7 +99,6 @@ void Player::update(sf::RenderTarget* target) {
 
 void Player::render(sf::RenderTarget* target) {
 	target->draw(this->shape);
-	
 }
 
 Vector2f Player::normalize_vector(float vecx, float vecy) {
@@ -117,7 +118,7 @@ void Player::updateHpbar() {
 	float hpPercent = static_cast<float>(hp) / maxHp;
 	hpPercent = std::clamp(hpPercent, 0.f, 1.f);
 
-	
+
 	playerhpBarFill.setSize(sf::Vector2f(200.f * hpPercent, 20.f));
 	hpText.setString(std::to_string(hp) + "/" + std::to_string(maxHp));
 
@@ -133,26 +134,26 @@ void Player::updateHpbar() {
 }
 
 void Player::renderHpBar(sf::RenderTarget* target) {
-	
+
 	sf::Vector2u windowSize = target->getSize();
 	float posX = windowSize.x - playerhpBarBackground.getSize().x - 20.f;
-	float posY = windowSize.y - playerhpBarBackground.getSize().y - 20.f;
+	float posY = windowSize.y - playerhpBarBackground.getSize().y - 32.f;
 
 	playerhpBarBackground.setPosition(posX, posY);
 	playerhpBarFill.setPosition(posX, posY);
 
-	float posXtext = windowSize.x - 20.f;
-	float posYtext = windowSize.y - 20.f;
+	float posXtext = playerhpBarBackground.getPosition().x + playerhpBarBackground.getSize().x / 2 - hpText.getLocalBounds().width / 2;
+	float posYtext = playerhpBarBackground.getPosition().y + 22;
 
 	hpText.setPosition(posXtext, posYtext);
 
 	target->draw(playerhpBarBackground);
 	target->draw(playerhpBarFill);
-	/*target->draw(hpText);*/
+	target->draw(this->hpText);
 }
 
 void Player::takeDamage(int damage) {
 	hp -= damage;
 	hp = std::max(0, hp); // Zabezpieczenie przed ujemnym HP
-	updateHpbar(); // Aktualizuj wygląd paska
+	updateHpbar(); // Aktualizuj wyglÄ…d paska
 }
