@@ -66,6 +66,7 @@
     </Image>
   </ItemGroup>
   <ItemGroup>
+    <Font Include="Font\Symtext.ttf">
     <Font Include="gfx\Symtext.ttf">
       <Filter>Pliki zasobów</Filter>
     </Font>
