@@ -11,6 +11,8 @@ class Enemy {
 	RectangleShape hpBarBackground;
 	RectangleShape hpBarFill;
 
+	int damage;
+
 private:
 	float attackSpeed;
 	Clock attackTimer;
@@ -20,7 +22,7 @@ public:
 	virtual ~Enemy(); //nie przesuwaæ do virtualek bo coœ siê zjebie
 
 
-	void update(Vector2f playerpos, Sprite playerSprite, Player player);
+	void update(Vector2f playerpos, Sprite playerSprite, Player& player);
 	void render(sf::RenderTarget* target);
 	void takeDamage(int damage);
 	bool isDead() const;
@@ -32,7 +34,7 @@ public:
 	// virtualki
 	virtual void moveEnemy(Vector2f playerpos) = 0;
 	virtual void initVars() = 0;
-	virtual void collided(Player player) = 0;
+	virtual void collided(Player& player) = 0;
 
 	//gettery i settery
 	void setHP(int x);
@@ -44,6 +46,8 @@ public:
 	void setSpriteColor(Color c);
 	Vector2f getSpritePos();
 	float getAttackTime();
+	void setDamage(int x);
+	int getDamage() const;
 };
 
 class StandardEnemy : public Enemy {
@@ -51,7 +55,7 @@ public:
 	StandardEnemy(Texture* tex);
 	void initVars();
 	void moveEnemy(Vector2f playerpos);
-	void collided(Player player);
+	void collided(Player& player);
 };
 
 class TankEnemy : public Enemy {
@@ -59,7 +63,7 @@ public:
 	TankEnemy(Texture* tex);
 	void initVars();
 	void moveEnemy(Vector2f playerpos);
-	void collided(Player player);
+	void collided(Player& player);
 };
 
 class RangeEnemy : public Enemy {
@@ -68,6 +72,6 @@ public:
 	RangeEnemy(Texture* tex);
 	void initVars();
 	void moveEnemy(Vector2f playerpos);
-	void collided(Player player);
+	void collided(Player& player);
 };
 

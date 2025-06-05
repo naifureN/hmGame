@@ -58,7 +58,7 @@ void Enemy::updateHpBar() {
 	}
 }
 
-void Enemy::update(Vector2f playerpos, Sprite playerSprite, Player player) {
+void Enemy::update(Vector2f playerpos, Sprite playerSprite, Player& player) {
 	if (checkCollision(playerSprite)) {
 		collided(player);
 	}
@@ -108,6 +108,13 @@ float Enemy::getAttackTime() {
 	return attackTimer.getElapsedTime().asMilliseconds() / 1000;
 }
 
+void Enemy::setDamage(int x) {
+	damage = x;
+}
+
+int Enemy::getDamage() const {
+	return damage;
+}
 void Enemy::resetAttackTimer() {
 	attackTimer.restart();
 }
@@ -116,6 +123,7 @@ void StandardEnemy::initVars() {
 	setAttackSpeed(2.5f);
 	setHP(100);
 	setMovespeed(3.0f);
+	setDamage(10);
 }
 
 StandardEnemy::StandardEnemy(Texture* tex) : Enemy(tex){
@@ -131,9 +139,9 @@ void StandardEnemy::moveEnemy(Vector2f playerpos) {
 	}
 }
 
-void StandardEnemy::collided(Player player) {
+void StandardEnemy::collided(Player& player) {
 	if (getAttackTime() > getAttackSpeed()) {
-		//player.dealDamage()
+		player.takeDamage(getDamage());
 		std::cout << "hit! " << std::endl;
 		resetAttackTimer();
 	}
@@ -143,6 +151,7 @@ void TankEnemy::initVars() {
 	setAttackSpeed(4.0f);
 	setHP(200);
 	setMovespeed(1.5f);
+	setDamage(30);
 }
 
 TankEnemy::TankEnemy(Texture* tex) : Enemy(tex) {
@@ -159,9 +168,9 @@ void TankEnemy::moveEnemy(Vector2f playerpos) {
 	}
 }
 
-void TankEnemy::collided(Player player) {
+void TankEnemy::collided(Player& player) {
 	if (getAttackTime() > getAttackSpeed()) {
-		//player.dealDamage()
+		player.takeDamage(getDamage());
 		std::cout << "hit! " << std::endl;
 		resetAttackTimer();
 	}
@@ -196,4 +205,4 @@ void RangeEnemy::moveEnemy(Vector2f playerpos) {
 	
 }
 
-void RangeEnemy::collided(Player player) {}
+void RangeEnemy::collided(Player& player) {}

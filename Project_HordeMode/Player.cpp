@@ -30,7 +30,7 @@ void Player::initHpBar() {
 }
 
 
-Player::Player(float x, float y) : hp(30), maxHp(100) {
+Player::Player(float x, float y) : hp(100), maxHp(100) {
 	this->shape.setPosition(x, y);
 	this->initVars();
 	this->initShape();
@@ -154,7 +154,8 @@ void Player::takeDamage(int damage) {
 	hp -= damage;
 	hp = std::max(0, hp); // Zabezpieczenie przed ujemnym HP
 	updateHpbar(); // Aktualizuj wyglÄ…d paska
-  
+}
+
 const Sprite& Player::getSprite() const {
 	return shape;
 }
