@@ -19,11 +19,11 @@ void Spawner::spawn() {
         break;
     }
 }
- 
 
-void Spawner::updateEnemies(Vector2f playerpos) {
+
+void Spawner::updateEnemies(Vector2f playerpos, Sprite playerSprite, Player player) {
     for (auto& e : enemies)
-        e->update(playerpos);
+        e->update(playerpos, playerSprite, player);
 }
 
 

@@ -89,3 +89,6 @@ Vector2f Player::normalize_vector(float vecx, float vecy) {
 const Vector2f& Player::getPos() const {
 	return shape.getPosition();
 }
+const Sprite& Player::getSprite() const {
+	return shape;
+}
