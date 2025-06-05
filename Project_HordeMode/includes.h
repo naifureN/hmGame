@@ -7,5 +7,7 @@
 #include <SFML/Audio.hpp>
 #include <SFML/Network.hpp>
 #include <iostream>
+#include <cstdlib>
+#include <ctime>
 
 using namespace sf;

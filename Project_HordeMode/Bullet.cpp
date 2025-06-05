@@ -31,8 +31,8 @@ void Bullet::update() {
 
 }
 
-void Bullet::setTarget(const Vector2f& playerpos, const Vector2f& mousepos) {
-	Vector2f direction = mousepos - playerpos;
+void Bullet::setTarget(const Vector2f& targetpos, const Vector2f& mousepos) {
+	Vector2f direction = mousepos - targetpos;
 	float length = sqrt(direction.x * direction.x + direction.y * direction.y);
 	if (length != 0) {
 		direction /= length;

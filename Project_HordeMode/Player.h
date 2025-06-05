@@ -22,4 +22,5 @@ public:
 	void render(sf::RenderTarget* target);
 	Vector2f normalize_vector(float vecx, float vecy);
 	const Vector2f& getPos() const;
+	const Sprite& getSprite() const;
 };

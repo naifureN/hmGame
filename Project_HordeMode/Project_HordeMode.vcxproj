@@ -164,6 +164,9 @@
     <Image Include="gfx\enemy.png" />
     <Image Include="gfx\player.png" />
   </ItemGroup>
+  <ItemGroup>
+    <Font Include="gfx\Symtext.ttf" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

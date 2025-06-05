@@ -69,8 +69,6 @@ void Player::updateWindowBoundsCollision(sf::RenderTarget* target) {
 }
 //losowy komentarz ¿eby by³y zmiany
 void Player::update(sf::RenderTarget* target) {
-
-
 	this->updateInput();
 	this->updateWindowBoundsCollision(target);
 }
@@ -90,4 +88,7 @@ Vector2f Player::normalize_vector(float vecx, float vecy) {
 
 const Vector2f& Player::getPos() const {
 	return shape.getPosition();
+}
+const Sprite& Player::getSprite() const {
+	return shape;
 }

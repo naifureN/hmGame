@@ -11,7 +11,7 @@ void Game::initWindow() {
 void Game::initVars() {
 	this->endGame = false;
 	this->shootDelay = 0.001f;
-	this->bulletTexture.loadFromFile("bullet.png");
+	this->bulletTexture.loadFromFile("gfx/bullet.png");
 }
 
 const bool Game::running() const {
@@ -63,7 +63,7 @@ void Game::update() {
 	this->pollEvents();
 	this->player.update(&this->window);
 	updateBullets();
-
+	this->spawner.updateEnemies(player.getPos(), player.getSprite(), player);
 }
 
 void Game::render() {
@@ -91,11 +91,11 @@ void Game::updateBullets() {
 		auto& enemies = spawner.getEnemies();
 
 		for (size_t j = 0; j < enemies.size();) {
-			if (bullets[i]->getGlobalBounds().intersects(enemies[j].getBounds())) {
-				enemies[j].takeDamage(bullets[i]->getDamage());
+			if (bullets[i]->getGlobalBounds().intersects(enemies[j]->getBounds())) {
+				enemies[j]->takeDamage(bullets[i]->getDamage());
 				bulletHit = true;
 
-				if (enemies[j].isDead()) {
+				if (enemies[j]->isDead()) {
 					enemies.erase(enemies.begin() + j);
 					continue;
 				}
