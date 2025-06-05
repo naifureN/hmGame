@@ -1,5 +1,6 @@
 #include "Enemy.h"
 using namespace sf;
+//japko
 
 void Enemy::render(sf::RenderTarget* target) {
 	target->draw(this->sprite);
