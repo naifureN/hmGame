@@ -1,5 +1,6 @@
 #include"Header.h"
 using namespace sf;
+using namespace std;
 //Funs
 
 void Game::initWindow() {
@@ -12,6 +13,19 @@ void Game::initVars() {
 	this->endGame = false;
 	this->shootDelay = 0.001f;
 	this->bulletTexture.loadFromFile("gfx/bullet.png");
+}
+
+void Game::initFonts(){
+	this->font.loadFromFile("Fonts/Allura-Regular.otf");
+}
+
+void Game::initText(){
+	this->endGameText.setFont(this->font);
+	this->endGameText.setCharacterSize(30);
+	this->endGameText.setFillColor(Color::Red);
+	this->endGameText.setPosition(Vector2f(200.f, 200.f));
+	this->endGameText.setString("GAME OVER");
+
 }
 
 const bool Game::running() const {
@@ -31,6 +45,9 @@ void Game::pollEvents() {
 			if (this->evnt.key.code == sf::Keyboard::Space) {
 				this->spawner.spawn();
 			}
+			if (this->evnt.key.code == sf::Keyboard::K) {
+				this->endGame=true;
+			}
 			break;
 		case sf::Event::MouseButtonPressed:
 			if (evnt.mouseButton.button == Mouse::Left)
@@ -47,10 +64,17 @@ void Game::pollEvents() {
 	}
 }
 
+const bool& Game::getEndGame() const
+{
+	return this->endGame;
+}
+
 //Cons and Destrs
 Game::Game() {
 	this->initWindow();
 	this->initVars();
+	this->initFonts();
+	this->initText();
 }
 
 Game::~Game() {
@@ -60,10 +84,13 @@ Game::~Game() {
 
 
 void Game::update() {
+	if (this->getEndGame() == false) {
+		this->pollEvents();
+		this->player.update(&this->window);
+		updateBullets();
+		this->spawner.updateEnemies(player.getPos());
+	}
 	this->pollEvents();
-	this->player.update(&this->window);
-	updateBullets();
-	this->spawner.updateEnemies(player.getPos());
 }
 
 void Game::render() {
@@ -71,6 +98,13 @@ void Game::render() {
 	this->player.render(&this->window);
 	this->spawner.renderEnemies(&this->window);
 	for (auto& b : bullets) b->render(&window);
+	if (this->getEndGame() == true) {
+		this->window.draw(endGameText);
+		this->window.display();
+		std::this_thread::sleep_for(5000ms);
+		this->window.close();
+		this->runningbool = false;
+	}
 	this->window.display();
 
 }

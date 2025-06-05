@@ -14,13 +14,20 @@ class Game {
 	Player player;
 	Spawner spawner;
 	Clock shootClock;
+	Clock endGameClock;
+	Font font;
+	Text endGameText;
 	float shootDelay;
 	bool runningbool = true;
 
 	void initWindow();
 	void initVars();
+	void initFonts();
+	void initText();
+
 
 public:
+	const bool& getEndGame() const;
 	Game();
 	~Game();
 
