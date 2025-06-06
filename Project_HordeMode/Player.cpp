@@ -159,3 +159,8 @@ void Player::takeDamage(int damage) {
 const Sprite& Player::getSprite() const {
 	return shape;
 }
+
+FloatRect Player::getPlayerBounds() const
+{
+	return shape.getGlobalBounds();
+}

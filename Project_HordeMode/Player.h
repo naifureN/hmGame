@@ -33,4 +33,6 @@ public:
 	void renderHpBar(sf::RenderTarget* target);
 	void takeDamage(int damage);
 	const Sprite& getSprite() const;
+
+	FloatRect getPlayerBounds() const;
 };
