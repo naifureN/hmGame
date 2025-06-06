@@ -16,16 +16,24 @@ void Game::initVars() {
 }
 
 void Game::initFonts(){
-	this->font.loadFromFile("Fonts/Allura-Regular.otf");
+	this->font.loadFromFile("Fonts/Symtext.ttf");
 }
 
 void Game::initText(){
 	this->endGameText.setFont(this->font);
-	this->endGameText.setCharacterSize(30);
+	this->endGameText.setCharacterSize(60);
 	this->endGameText.setFillColor(Color::Red);
-	this->endGameText.setPosition(Vector2f(200.f, 200.f));
 	this->endGameText.setString("GAME OVER");
+	this->endGameText.setOrigin(endGameText.getGlobalBounds().width / 2, endGameText.getGlobalBounds().height / 2);
+	this->endGameText.setPosition(640.f, 280.f);
+	
 
+}
+
+void Game::initButtons()
+{
+	/*buttons.clear();*/
+	buttons.emplace_back(make_unique<Button>(400.f, 300.f, 200.f, 80.f, "EXIT")); //TU DODAJ KOLEJNE JAK BEDA
 }
 
 const bool Game::running() const {
@@ -75,13 +83,35 @@ Game::Game() {
 	this->initVars();
 	this->initFonts();
 	this->initText();
+	this->initButtons();
 }
 
 Game::~Game() {
 	bullets.clear();
+	this->window.clear();
 	this->window.close();
 }
 
+
+void Game::updateButtons()
+{
+	Vector2f mousePos = window.mapPixelToCoords(Mouse::getPosition(window));
+
+	for (auto& button : buttons) {
+		button->update(mousePos);
+
+		if (button->isClicked()) {
+			if (button->getText() == "EXIT") {
+				this->window.close();
+				this->runningbool = false;
+				break;
+				
+				
+			}
+		}
+	}
+
+}
 
 void Game::update() {
 	if (this->getEndGame() == false) {
@@ -90,23 +120,36 @@ void Game::update() {
 		updateBullets();
 		this->spawner.updateEnemies(player.getPos());
 	}
+
 	this->pollEvents();
+	updateButtons();
+}
+
+void Game::renderButtons()
+{
+	for (auto& button : buttons) {
+		button->render(&window);
+	}
+
 }
 
 void Game::render() {
 	this->window.clear();
+
 	this->player.render(&this->window);
 	this->spawner.renderEnemies(&this->window);
 	for (auto& b : bullets) b->render(&window);
-	if (this->getEndGame() == true) {
+
+
+	if (this->getEndGame()) {
+		sf::RectangleShape overlay(sf::Vector2f(window.getSize()));
+		overlay.setFillColor(sf::Color(0, 0, 0, 150));
+		this->window.draw(overlay);
+
 		this->window.draw(endGameText);
-		this->window.display();
-		std::this_thread::sleep_for(5000ms);
-		this->window.close();
-		this->runningbool = false;
+		this->renderButtons();
 	}
 	this->window.display();
-
 }
 
 void Game::shoot() {
