@@ -3,6 +3,7 @@
 #include"Player.h"
 #include"Spawner.h"
 #include"Bullet.h"
+#include"Enemy.h"
 
 
 class Game {
@@ -33,4 +34,6 @@ public:
 	void shoot();
 	void updateBullets();
 	bool isBulletOut(const Bullet& bullet) const;
+
+	void Enemyshoot();
 };

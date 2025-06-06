@@ -1,6 +1,7 @@
 #pragma once
 #include "includes.h"
 #include "Player.h"
+#include"Bullet.h"
 using namespace sf;
 class Enemy {
 	Sprite sprite;
@@ -68,10 +69,23 @@ public:
 
 class RangeEnemy : public Enemy {
 	float closest;
+	Clock shootTimer;
+	float shootCooldown;
+	std::vector<Bullet>bullets;
+	Texture bulletTexture;
+
+	void initBulletTexture(Texture* tex);
 public:
 	RangeEnemy(Texture* tex);
 	void initVars();
 	void moveEnemy(Vector2f playerpos);
 	void collided(Player& player);
+
+	void updateBullets();
+	void renderBullets(RenderTarget* target);
+
+	void setshootCooldown(float x);
+
+	std::vector<Bullet>& getBullets();
 };
 

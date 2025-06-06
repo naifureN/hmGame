@@ -64,12 +64,38 @@ void Game::update() {
 	this->player.update(&this->window);
 	updateBullets();
 	this->spawner.updateEnemies(player.getPos(), player.getSprite(), player);
+	this->Enemyshoot();
+
+}
+
+void Game::Enemyshoot() {
+	for (auto& enemy : spawner.getEnemies()) {
+		enemy->update(player.getPos(), player.getSprite(), player);
+		if (auto ranged = dynamic_cast<RangeEnemy*>(enemy.get())) {
+			ranged->updateBullets();
+			auto& bullets = ranged->getBullets();
+			for (size_t i = 0; i < bullets.size();) {
+				if (bullets[i].getGlobalBounds().intersects(player.getPlayerBounds())) {
+					player.takeDamage(ranged->getDamage());
+					bullets.erase(bullets.begin() + i);
+				}
+				else {
+					++i;
+				}
+			}
+		}
+	}
 }
 
 void Game::render() {
 	this->window.clear();
 	this->player.render(&this->window);
 	this->spawner.renderEnemies(&this->window);
+	for (auto& enemy : spawner.getEnemies()) {
+		if (auto rangedEnemy = dynamic_cast<RangeEnemy*>(enemy.get())) {
+			rangedEnemy->renderBullets(&this->window);
+		}
+	}
 	for (auto& b : bullets) b->render(&window);
 	this->player.renderHpBar(&this->window);
 	this->window.display();
