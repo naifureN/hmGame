@@ -32,8 +32,9 @@ void Game::initText(){
 
 void Game::initButtons()
 {
-	/*buttons.clear();*/
+	buttons.clear();
 	buttons.emplace_back(make_unique<Button>(400.f, 300.f, 200.f, 80.f, "EXIT")); //TU DODAJ KOLEJNE JAK BEDA
+	
 }
 
 const bool Game::running() const {
@@ -55,6 +56,7 @@ void Game::pollEvents() {
 			}
 			if (this->evnt.key.code == sf::Keyboard::K) {
 				this->endGame=true;
+				cout << "ENDGAME USTAWIONE NA TRUE" << endl;
 			}
 			break;
 		case sf::Event::MouseButtonPressed:
@@ -95,34 +97,42 @@ Game::~Game() {
 
 void Game::updateButtons()
 {
+	std::cout << "[DEBUG] updateButtons wywo³ane" << std::endl;
+
 	Vector2f mousePos = window.mapPixelToCoords(Mouse::getPosition(window));
+	bool mouseLeftPressed = sf::Mouse::isButtonPressed(sf::Mouse::Left);
 
 	for (auto& button : buttons) {
-		button->update(mousePos);
+		button->update(mousePos, mouseLeftPressed);
 
 		if (button->isClicked()) {
+			std::cout << "Kliknieto przycisk: " << button->getText() << std::endl;
+
 			if (button->getText() == "EXIT") {
-				this->window.close();
+				cout << "ZAMKNIJ GRE KURWA" << endl;
 				this->runningbool = false;
-				break;
-				
-				
+				this->window.close();
+				return;
 			}
 		}
 	}
-
 }
 
+
 void Game::update() {
+	this->pollEvents();
 	if (this->getEndGame() == false) {
-		this->pollEvents();
 		this->player.update(&this->window);
 		updateBullets();
 		this->spawner.updateEnemies(player.getPos());
 	}
+	if (this->getEndGame()) {
+		std::cout << "GAME OVER — updateButtons() wywo³ane" << std::endl;
+		updateButtons();
+	}
 
-	this->pollEvents();
-	updateButtons();
+	
+	
 }
 
 void Game::renderButtons()

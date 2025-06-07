@@ -20,7 +20,7 @@ private:
 	Clock endGameClock;
 	Font font;
 	Text endGameText;
-	RestartButton* restartButton;
+	/*RestartButton* restartButton;*/
 	float shootDelay;
 	bool runningbool = true;
 

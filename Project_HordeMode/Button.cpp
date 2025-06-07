@@ -3,18 +3,16 @@
 Button::Button(float x, float y, float width, float height, const string& buttonText)
 {
 	initFonts();
-	
 
 	this->shape.setPosition(x, y);
 	shape.setSize(sf::Vector2f(width, height));
 	shape.setFillColor(Color::White);
-	
+
 	initText(buttonText);
+	std::cout << "Creating button at " << this << std::endl;
 }
 
-Button::~Button()
-{
-}
+Button::~Button() {}
 
 void Button::initFonts()
 {
@@ -26,7 +24,6 @@ void Button::initText(const string& buttonText)
 	this->text.setFont(this->font);
 	this->text.setCharacterSize(60);
 	this->text.setFillColor(Color::Red);
-	
 	this->setText(buttonText);
 }
 
@@ -37,10 +34,9 @@ void Button::setText(const string& buttonText)
 	this->text.setPosition(
 		shape.getPosition().x + shape.getSize().x / 2.0f,
 		shape.getPosition().y + shape.getSize().y / 2.0f);
-
 }
 
-void Button::update(Vector2f& mousePos)
+void Button::update(Vector2f& mousePos, bool mouseLeftPressedLastFrame)
 {
 	this->isHovered = this->shape.getGlobalBounds().contains(mousePos);
 	this->isPressed = false;
@@ -55,6 +51,8 @@ void Button::update(Vector2f& mousePos)
 	else {
 		shape.setFillColor(Color::White);
 	}
+
+	this->wasPressedLastFrame = mouseLeftPressedLastFrame;
 }
 
 void Button::render(sf::RenderTarget* target)
@@ -65,22 +63,10 @@ void Button::render(sf::RenderTarget* target)
 
 bool Button::isClicked() const
 {
-	return this->isPressed && this->isHovered;
+	return this->isHovered && !wasPressedLastFrame && sf::Mouse::isButtonPressed(sf::Mouse::Left);
 }
 
-const string& Button::getText() const
+string Button::getText() const
 {
-	return this->text.getString();
+	return this->text.getString().toAnsiString();
 }
-
-
-//RestartButton::RestartButton(float x, float y, float width, float height):Button(x,y,width,height)
-//{
-//	setText();
-//}
-//
-//void RestartButton::setText()
-//{
-//	this->text.setString("RESTART");
-//	this->text.setPosition(Vector2f(400.f, 260.f));
-//}
