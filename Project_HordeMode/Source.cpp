@@ -12,11 +12,45 @@ void Game::initVars() {
 	this->endGame = false;
 	this->shootDelay = 0.001f;
 	this->bulletTexture.loadFromFile("gfx/bullet.png");
+	std::srand(static_cast<unsigned>(std::time(nullptr)));
+	initObstacles();
 }
 
 const bool Game::running() const {
 	return this->runningbool;
 }
+
+void Game::initObstacles() {
+	obstacles.clear();
+
+	std::srand(static_cast<unsigned>(std::time(nullptr)));
+	int obstacle_count = 2 + (std::rand() % 5); // 2-6 przeszkód
+
+	for (int i = 0; i < obstacle_count; ++i) {
+		auto obstacle = std::make_unique<sf::RectangleShape>();
+
+		// Ustawienia przeszkody
+		obstacle->setSize(sf::Vector2f(
+			50 + (std::rand() % 150),  // szerokoœæ 50-200
+			30 + (std::rand() % 70)     // wysokoœæ 30-100
+		));
+
+		obstacle->setPosition(
+			100 + (std::rand() % (window.getSize().x - 200)),
+			100 + (std::rand() % (window.getSize().y - 200))
+		);
+
+		obstacle->setRotation(std::rand() % 360);
+		obstacle->setFillColor(sf::Color(
+			50 + (std::rand() % 150),
+			50 + (std::rand() % 150),
+			50 + (std::rand() % 150)
+		));
+
+		obstacles.push_back(std::move(obstacle));
+	}
+}
+
 
 void Game::pollEvents() {
 	while (this->window.pollEvent(this->evnt))
@@ -55,6 +89,7 @@ Game::Game() {
 
 Game::~Game() {
 	bullets.clear();
+	obstacles.clear();
 	this->window.close();
 }
 
@@ -62,6 +97,9 @@ Game::~Game() {
 void Game::update() {
 	this->pollEvents();
 	this->player.update(&this->window);
+	if (checkCollisionWithObstacles(player.getPlayerBounds())) {
+
+	}
 	updateBullets();
 	this->spawner.updateEnemies(player.getPos(), player.getSprite(), player);
 	this->Enemyshoot();
@@ -89,6 +127,9 @@ void Game::Enemyshoot() {
 
 void Game::render() {
 	this->window.clear();
+	for (size_t i = 0; i < obstacles.size();++i) {
+		window.draw(*obstacles[i]);
+	}
 	this->player.render(&this->window);
 	this->spawner.renderEnemies(&this->window);
 	for (auto& enemy : spawner.getEnemies()) {
@@ -100,6 +141,28 @@ void Game::render() {
 	this->player.renderHpBar(&this->window);
 	this->window.display();
 
+}
+
+bool Game::checkCollisionWithObstacles(const sf::FloatRect& bounds) const {
+	for (const auto& obstacle : obstacles) {
+		if (checkRotatedCollision(obstacle, bounds)) {
+			return true;
+		}
+	}
+	return false;
+}
+
+bool Game::checkRotatedCollision(const std::unique_ptr<sf::RectangleShape>& rect, const sf::FloatRect& bounds) const {
+	const sf::Transform& transform = rect->getTransform(); // UWAGA: rect-> zamiast rect.
+	sf::Transform inverseTransform = transform.getInverse();
+
+	sf::FloatRect rectLocal;
+	rectLocal.left = inverseTransform.transformPoint(bounds.left, bounds.top).x;
+	rectLocal.top = inverseTransform.transformPoint(bounds.left, bounds.top).y;
+	rectLocal.width = bounds.width;
+	rectLocal.height = bounds.height;
+
+	return rect->getLocalBounds().intersects(rectLocal); // rect-> zamiast rect.
 }
 
 void Game::shoot() {
@@ -130,7 +193,7 @@ void Game::updateBullets() {
 			j++;
 		}
 
-		if (bulletHit || isBulletOut(*bullets[i])) {
+		if (bulletHit || isBulletOut(*bullets[i]) || checkCollisionWithObstacles(bullets[i]->getGlobalBounds())) {
 			bullets.erase(bullets.begin() + i);
 		}
 		else {
