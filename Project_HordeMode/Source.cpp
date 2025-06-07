@@ -12,6 +12,8 @@ void Game::initVars() {
 	this->endGame = false;
 	this->shootDelay = 0.001f;
 	this->bulletTexture.loadFromFile("gfx/bullet.png");
+	this->backgroundTexture.loadFromFile("gfx/background.png");
+	this->backgroundSprite.setTexture(backgroundTexture);
 }
 
 const bool Game::running() const {
@@ -89,6 +91,7 @@ void Game::Enemyshoot() {
 
 void Game::render() {
 	this->window.clear();
+	this->window.draw(this->backgroundSprite);
 	this->player.render(&this->window);
 	this->spawner.renderEnemies(&this->window);
 	for (auto& enemy : spawner.getEnemies()) {
