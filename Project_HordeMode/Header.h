@@ -23,6 +23,7 @@ private:
 	/*RestartButton* restartButton;*/
 	float shootDelay;
 	bool runningbool = true;
+	bool mouseLeftPressedLastFrame;
 
 	void initWindow();
 	void initVars();

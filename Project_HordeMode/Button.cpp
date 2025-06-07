@@ -2,15 +2,20 @@
 
 Button::Button(float x, float y, float width, float height, const string& buttonText)
 {
-	initFonts();
+    initFonts();
 
-	this->shape.setPosition(x, y);
-	shape.setSize(sf::Vector2f(width, height));
-	shape.setFillColor(Color::White);
+    // chwilowy rozmiar, zaraz i tak go dopasujemy w setText()
+    shape.setSize(sf::Vector2f(width, height));
 
-	initText(buttonText);
-	std::cout << "Creating button at " << this << std::endl;
+    // ORIGIN = œrodek
+    shape.setOrigin(shape.getSize().x / 2.f, shape.getSize().y / 2.f);
+    shape.setPosition(x, y);        // <- x,y to TERAZ ŒRODEK
+
+    shape.setFillColor(Color::Transparent);
+
+    initText(buttonText);           // tu dopasujemy finalny rozmiar
 }
+
 
 Button::~Button() {}
 
@@ -30,11 +35,23 @@ void Button::initText(const string& buttonText)
 void Button::setText(const string& buttonText)
 {
 	this->text.setString(buttonText);
-	this->text.setOrigin(text.getGlobalBounds().width / 2, text.getGlobalBounds().height / 2);
-	this->text.setPosition(
-		shape.getPosition().x + shape.getSize().x / 2.0f,
-		shape.getPosition().y + shape.getSize().y / 2.0f);
+	auto bounds = text.getLocalBounds();
+
+	float paddingX = 20.f;
+	float paddingY = 10.f;
+
+	// dopasuj rozmiar hitboxu
+	shape.setSize({ bounds.width + paddingX * 2, bounds.height + paddingY * 2 });
+
+	// uaktualnij origin na œrodek nowego kszta³tu
+	shape.setOrigin(shape.getSize().x / 2.f, shape.getSize().y / 2.f);
+
+	// wycentruj tekst wewn¹trz prostok¹ta
+	text.setOrigin(bounds.left + bounds.width / 2.f, bounds.top + bounds.height / 2.f);
+	text.setPosition(shape.getPosition());   // bo shape.pos to ju¿ œrodek
 }
+
+
 
 void Button::update(Vector2f& mousePos, bool mouseLeftPressedLastFrame)
 {
@@ -42,17 +59,17 @@ void Button::update(Vector2f& mousePos, bool mouseLeftPressedLastFrame)
 	this->isPressed = false;
 
 	if (isHovered) {
-		shape.setFillColor(Color::Yellow);
+		shape.setFillColor(Color(102, 99, 99));
 		if (Mouse::isButtonPressed(Mouse::Left)) {
-			shape.setFillColor(Color::Green);
+			shape.setFillColor(Color(158, 157, 157));
 			this->isPressed = true;
 		}
 	}
 	else {
-		shape.setFillColor(Color::White);
+		shape.setFillColor(Color::Black);
 	}
 
-	this->wasPressedLastFrame = mouseLeftPressedLastFrame;
+	
 }
 
 void Button::render(sf::RenderTarget* target)

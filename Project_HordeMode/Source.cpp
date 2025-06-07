@@ -13,6 +13,7 @@ void Game::initVars() {
 	this->endGame = false;
 	this->shootDelay = 0.001f;
 	this->bulletTexture.loadFromFile("gfx/bullet.png");
+	this->mouseLeftPressedLastFrame = false;
 }
 
 void Game::initFonts(){
@@ -25,7 +26,7 @@ void Game::initText(){
 	this->endGameText.setFillColor(Color::Red);
 	this->endGameText.setString("GAME OVER");
 	this->endGameText.setOrigin(endGameText.getGlobalBounds().width / 2, endGameText.getGlobalBounds().height / 2);
-	this->endGameText.setPosition(640.f, 280.f);
+	this->endGameText.setPosition(640.f, 200.f);
 	
 
 }
@@ -33,9 +34,19 @@ void Game::initText(){
 void Game::initButtons()
 {
 	buttons.clear();
-	buttons.emplace_back(make_unique<Button>(400.f, 300.f, 200.f, 80.f, "EXIT")); //TU DODAJ KOLEJNE JAK BEDA
-	
+
+	float centerX = 1280.f / 2.f;
+	float gameOverY = 280.f;
+	float spacing = 50.f;
+
+	buttons.emplace_back(
+		std::make_unique<Button>(
+			centerX,                 // œrodek X
+			gameOverY + spacing,     // œrodek Y (pod napisem)
+			0.f, 0.f,                // wymiary tymczasowe – zaraz zostan¹ nadpisane
+			"EXIT"));
 }
+
 
 const bool Game::running() const {
 	return this->runningbool;
@@ -97,26 +108,26 @@ Game::~Game() {
 
 void Game::updateButtons()
 {
-	std::cout << "[DEBUG] updateButtons wywo³ane" << std::endl;
-
 	Vector2f mousePos = window.mapPixelToCoords(Mouse::getPosition(window));
 	bool mouseLeftPressed = sf::Mouse::isButtonPressed(sf::Mouse::Left);
 
 	for (auto& button : buttons) {
-		button->update(mousePos, mouseLeftPressed);
+		button->update(mousePos, mouseLeftPressedLastFrame);
 
 		if (button->isClicked()) {
 			std::cout << "Kliknieto przycisk: " << button->getText() << std::endl;
-
 			if (button->getText() == "EXIT") {
-				cout << "ZAMKNIJ GRE KURWA" << endl;
 				this->runningbool = false;
 				this->window.close();
 				return;
 			}
 		}
 	}
+
+	// Po update wszystkich przycisków
+	mouseLeftPressedLastFrame = mouseLeftPressed;
 }
+
 
 
 void Game::update() {
