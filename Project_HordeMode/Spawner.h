@@ -11,6 +11,10 @@ class Spawner {
 	int killedThisTurn = 0;
 	sf::Clock spawnClock = Clock();
 	float spawnInterval = 1.0f;
+	static Font font;
+	Text waveText;
+	RectangleShape waveBarBackground;
+	RectangleShape waveBarFill;
 public:
 	Spawner();
 	~Spawner();
@@ -20,5 +24,8 @@ public:
 	std::vector<std::unique_ptr<Enemy>>& getEnemies();
 	void startNextWave();
 	bool isWaveCleared() const;
+	void initWaveBar();
+	void updateWaveBar();
+	void addKilled();
 };
 
