@@ -119,6 +119,14 @@ void Enemy::resetAttackTimer() {
 	attackTimer.restart();
 }
 
+void Enemy::EnemyPushBack(const Vector2f& pushVec) {
+	sprite.move(pushVec);
+}
+
+const Vector2f& Enemy::getEnemyPosition() const{
+	return sprite.getPosition();
+}
+
 void StandardEnemy::initVars() {
 	setAttackSpeed(2.5f);
 	setHP(100);

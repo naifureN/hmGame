@@ -12,11 +12,45 @@ void Game::initVars() {
 	this->endGame = false;
 	this->shootDelay = 0.001f;
 	this->bulletTexture.loadFromFile("gfx/bullet.png");
+	std::srand(static_cast<unsigned>(std::time(nullptr)));
+	initObstacles();
 }
 
 const bool Game::running() const {
 	return this->runningbool;
 }
+
+void Game::initObstacles() {
+	obstacles.clear();
+
+	std::srand(static_cast<unsigned>(std::time(nullptr)));
+	int obstacle_count = 2 + (std::rand() % 5); // 2-6 przeszkód
+
+	for (int i = 0; i < obstacle_count; ++i) {
+		auto obstacle = std::make_unique<sf::RectangleShape>();
+
+		// Ustawienia przeszkody
+		obstacle->setSize(sf::Vector2f(
+			50 + (std::rand() % 150),  // szerokoœæ 50-200
+			30 + (std::rand() % 70)     // wysokoœæ 30-100
+		));
+
+		obstacle->setPosition(
+			100 + (std::rand() % (window.getSize().x - 200)),
+			100 + (std::rand() % (window.getSize().y - 200))
+		);
+
+		obstacle->setRotation(std::rand() % 360);
+		obstacle->setFillColor(sf::Color(
+			50 + (std::rand() % 150),
+			50 + (std::rand() % 150),
+			50 + (std::rand() % 150)
+		));
+
+		obstacles.push_back(std::move(obstacle));
+	}
+}
+
 
 void Game::pollEvents() {
 	while (this->window.pollEvent(this->evnt))
@@ -55,15 +89,42 @@ Game::Game() {
 
 Game::~Game() {
 	bullets.clear();
+	obstacles.clear();
 	this->window.close();
 }
 
 
 void Game::update() {
 	this->pollEvents();
-	this->player.update(&this->window);
+		this->player.update(&this->window);
+		if (checkCollisionWithObstacles(player.getPlayerBounds())) {
+			std::cout << "Collision" << std::endl;
+			player.PushBack();
+		}
+	
+	
 	updateBullets();
 	this->spawner.updateEnemies(player.getPos(), player.getSprite(), player);
+	for (auto& enemy : spawner.getEnemies()) {
+		if (checkCollisionWithObstacles(enemy->getBounds())) {
+			Vector2f dir = enemy->getEnemyPosition() - player.getPos();
+
+			float len = std::sqrt(dir.x * dir.x + dir.y * dir.y);
+			if (len != 0)
+				dir /= len;
+
+			// Cofamy po kroku a¿ wyjdzie z kolizji
+			const float maxPush = 10.f;
+			const float step = 0.5f;
+
+			for (float moved = 0.f; moved < maxPush; moved += step) {
+				enemy->EnemyPushBack(dir * step); // teraz przekazujemy gotowy krok
+				if (!checkCollisionWithObstacles(enemy->getBounds())) {
+					break;
+				}
+			}
+		}
+	}
 	this->Enemyshoot();
 
 }
@@ -79,8 +140,11 @@ void Game::Enemyshoot() {
 					player.takeDamage(ranged->getDamage());
 					bullets.erase(bullets.begin() + i);
 				}
+				else if(checkCollisionWithObstacles(bullets[i].getGlobalBounds())){
+					bullets.erase(bullets.begin() + i);
+				}
 				else {
-					++i;
+					i++;
 				}
 			}
 		}
@@ -89,6 +153,9 @@ void Game::Enemyshoot() {
 
 void Game::render() {
 	this->window.clear();
+	for (size_t i = 0; i < obstacles.size();++i) {
+		window.draw(*obstacles[i]);
+	}
 	this->player.render(&this->window);
 	this->spawner.renderEnemies(&this->window);
 	for (auto& enemy : spawner.getEnemies()) {
@@ -100,6 +167,42 @@ void Game::render() {
 	this->player.renderHpBar(&this->window);
 	this->window.display();
 
+}
+
+bool Game::checkCollisionWithObstacles(const sf::FloatRect& bounds) const {
+	for (const auto& obstacle : obstacles) {
+		if (checkRotatedCollision(obstacle, bounds)) {
+			return true;
+		}
+	}
+	return false;
+}
+
+bool Game::checkRotatedCollision(const std::unique_ptr<sf::RectangleShape>& rect, const sf::FloatRect& bounds) const {
+	const sf::Transform& transform = rect->getTransform();
+	sf::Transform inverseTransform = transform.getInverse();
+
+	// Przekszta³cenie wszystkich 4 rogów prostok¹ta `bounds` do lokalnego uk³adu wspó³rzêdnych `rect`
+	sf::Vector2f points[4] = {
+		inverseTransform.transformPoint({bounds.left, bounds.top}),
+		inverseTransform.transformPoint({bounds.left + bounds.width, bounds.top}),
+		inverseTransform.transformPoint({bounds.left, bounds.top + bounds.height}),
+		inverseTransform.transformPoint({bounds.left + bounds.width, bounds.top + bounds.height})
+	};
+
+	// Wyznaczenie lokalnego bounding boxa z tych punktów
+	float minX = points[0].x, maxX = points[0].x;
+	float minY = points[0].y, maxY = points[0].y;
+	for (int i = 1; i < 4; ++i) {
+		if (points[i].x < minX) minX = points[i].x;
+		if (points[i].x > maxX) maxX = points[i].x;
+		if (points[i].y < minY) minY = points[i].y;
+		if (points[i].y > maxY) maxY = points[i].y;
+	}
+
+	sf::FloatRect rectLocal(minX, minY, maxX - minX, maxY - minY);
+
+	return rect->getLocalBounds().intersects(rectLocal);
 }
 
 void Game::shoot() {
@@ -130,7 +233,7 @@ void Game::updateBullets() {
 			j++;
 		}
 
-		if (bulletHit || isBulletOut(*bullets[i])) {
+		if (bulletHit || isBulletOut(*bullets[i]) || checkCollisionWithObstacles(bullets[i]->getGlobalBounds())) {
 			bullets.erase(bullets.begin() + i);
 		}
 		else {

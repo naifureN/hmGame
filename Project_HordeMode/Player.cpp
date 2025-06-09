@@ -164,3 +164,21 @@ FloatRect Player::getPlayerBounds() const
 {
 	return shape.getGlobalBounds();
 }
+
+float Player::getSpeed() const
+{
+	return movespeed;
+}
+
+Vector2f Player::getDirection() const
+{
+	return direction;
+}
+
+void Player::PushBack()
+{
+	sf::Vector2f pushBack = -direction* movespeed;
+
+	shape.move(pushBack);
+	
+}
