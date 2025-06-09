@@ -374,6 +374,7 @@ void Game::updateBullets() {
 
 				if (enemies[j]->isDead()) {
 					enemies.erase(enemies.begin() + j);
+					spawner.addKilled();
 					continue;
 				}
 			}
