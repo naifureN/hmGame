@@ -1,6 +1,8 @@
 ﻿#include "Player.h"
 #include <iostream>
-void Player::initVars(){
+Font Player::font;
+
+void Player::initVars() {
 	this->movespeed = 5.f;
 	this->direction = Vector2f(0, 0);
 }
@@ -10,10 +12,29 @@ void Player::initShape() {
 	this->shape.setTexture(this->texture);
 }
 
-Player::Player(float x, float y) {
-	this->shape.setPosition(x, y);
+void Player::initHpBar() {
+
+	playerhpBarBackground.setSize(sf::Vector2f(200.f, 20.f));
+	playerhpBarBackground.setFillColor(sf::Color(50, 50, 50));
+	playerhpBarBackground.setOutlineThickness(2.f);
+	playerhpBarBackground.setOutlineColor(sf::Color::White);
+
+	playerhpBarFill.setSize(sf::Vector2f(200.f, 20.f));
+	playerhpBarFill.setFillColor(sf::Color::Green);
+
+	font.loadFromFile("gfx/Symtext.ttf");
+
+	hpText.setFont(font);
+	hpText.setCharacterSize(18);
+	hpText.setString("Piwo");
+}
+
+
+Player::Player(float x, float y) : hp(100), maxHp(100) {
+	this->shape.setPosition(640.f, 320.f);
 	this->initVars();
 	this->initShape();
+	this->initHpBar();
 }
 
 Player::~Player() {
@@ -67,10 +88,11 @@ void Player::updateWindowBoundsCollision(sf::RenderTarget* target) {
 
 
 }
-//losowy komentarz ¿eby by³y zmiany
+
 void Player::update(sf::RenderTarget* target) {
 	this->updateInput();
 	this->updateWindowBoundsCollision(target);
+	this->updateHpbar();
 }
 
 void Player::render(sf::RenderTarget* target) {
@@ -88,4 +110,75 @@ Vector2f Player::normalize_vector(float vecx, float vecy) {
 
 const Vector2f& Player::getPos() const {
 	return shape.getPosition();
+}
+
+void Player::updateHpbar() {
+	float hpPercent = static_cast<float>(hp) / maxHp;
+	hpPercent = std::clamp(hpPercent, 0.f, 1.f);
+
+
+	playerhpBarFill.setSize(sf::Vector2f(200.f * hpPercent, 20.f));
+	hpText.setString(std::to_string(hp) + "/" + std::to_string(maxHp));
+
+	if (hpPercent < 0.25f) {
+		playerhpBarFill.setFillColor(sf::Color::Red);
+	}
+	else if (hpPercent < 0.6f) {
+		playerhpBarFill.setFillColor(sf::Color::Yellow);
+	}
+	else {
+		playerhpBarFill.setFillColor(sf::Color::Green);
+	}
+}
+
+void Player::renderHpBar(sf::RenderTarget* target) {
+
+	sf::Vector2u windowSize = target->getSize();
+	float posX = windowSize.x - playerhpBarBackground.getSize().x - 20.f;
+	float posY = windowSize.y - playerhpBarBackground.getSize().y - 32.f;
+
+	playerhpBarBackground.setPosition(posX, posY);
+	playerhpBarFill.setPosition(posX, posY);
+
+	float posXtext = playerhpBarBackground.getPosition().x + playerhpBarBackground.getSize().x / 2 - hpText.getLocalBounds().width / 2;
+	float posYtext = playerhpBarBackground.getPosition().y + 22;
+
+	hpText.setPosition(posXtext, posYtext);
+
+	target->draw(playerhpBarBackground);
+	target->draw(playerhpBarFill);
+	target->draw(this->hpText);
+}
+
+void Player::takeDamage(int damage) {
+	hp -= damage;
+	hp = std::max(0, hp); // Zabezpieczenie przed ujemnym HP
+	updateHpbar(); // Aktualizuj wyglÄ…d paska
+}
+
+const Sprite& Player::getSprite() const {
+	return shape;
+}
+
+FloatRect Player::getPlayerBounds() const
+{
+	return shape.getGlobalBounds();
+}
+
+float Player::getSpeed() const
+{
+	return movespeed;
+}
+
+Vector2f Player::getDirection() const
+{
+	return direction;
+}
+
+void Player::PushBack()
+{
+	sf::Vector2f pushBack = -direction* movespeed;
+
+	shape.move(pushBack);
+	
 }

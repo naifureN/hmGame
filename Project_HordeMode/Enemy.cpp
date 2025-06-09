@@ -2,6 +2,7 @@
 using namespace sf;
 //japko
 
+
 void Enemy::render(sf::RenderTarget* target) {
 	target->draw(this->sprite);
 	target->draw(this->hpBarBackground);
@@ -9,8 +10,31 @@ void Enemy::render(sf::RenderTarget* target) {
 }
 Enemy::Enemy(Texture* tex): hp(100), maxHp(100) {
 	this->sprite.setTexture(*tex);
-	int rx = rand() % 500 + 40;
-	this->sprite.setPosition(Vector2f(rx, 100));
+	int dir = rand() % 4;
+	int rx, ry;
+	switch (dir) {
+	case 0:
+		rx = -(rand() % 40 + 40);
+		ry = rand() % 640 + 40;
+		this->sprite.setPosition(Vector2f(rx, ry));
+		break;
+	case 1:
+		rx = rand() % 40 + 40 + 1280;
+		ry = rand() % 640 + 40;
+		this->sprite.setPosition(Vector2f(rx, ry));
+		break;
+	case 2:
+		rx = rand() % 1200 + 40;
+		ry = -(rand() % 40 + 40);
+		this->sprite.setPosition(Vector2f(rx, ry));
+		break;
+	case 3:
+		rx = rand() % 1200 + 40;
+		ry = rand() % 40 + 40 + 720;
+		this->sprite.setPosition(Vector2f(rx, ry));
+		break;
+	}
+
 	hpBarBackground.setPosition(sprite.getPosition());
 	hpBarFill.setPosition(sprite.getPosition()); // x te same a y-10 jest ideolo
 
@@ -58,8 +82,13 @@ void Enemy::updateHpBar() {
 	}
 }
 
-void Enemy::update(Vector2f playerpos) {
-	moveEnemy(playerpos);
+void Enemy::update(Vector2f playerpos, Sprite playerSprite, Player& player) {
+	if (checkCollision(playerSprite)) {
+		collided(player);
+	}
+	else {
+		moveEnemy(playerpos);
+	}
 	hpBarBackground.setPosition(this->sprite.getPosition().x, this->sprite.getPosition().y-10);
 	hpBarFill.setPosition(this->sprite.getPosition().x, this->sprite.getPosition().y - 10);
 }
@@ -95,10 +124,38 @@ float Enemy::getMovespeed() {
 	return movespeed;
 }
 
+bool Enemy::checkCollision(const sf::Sprite& otherSprite) {
+	return sprite.getGlobalBounds().intersects(otherSprite.getGlobalBounds());
+}
+
+float Enemy::getAttackTime() {
+	return attackTimer.getElapsedTime().asMilliseconds() / 1000;
+}
+
+void Enemy::setDamage(int x) {
+	damage = x;
+}
+
+int Enemy::getDamage() const {
+	return damage;
+}
+void Enemy::resetAttackTimer() {
+	attackTimer.restart();
+}
+
+void Enemy::EnemyPushBack(const Vector2f& pushVec) {
+	sprite.move(pushVec);
+}
+
+const Vector2f& Enemy::getEnemyPosition() const{
+	return sprite.getPosition();
+}
+
 void StandardEnemy::initVars() {
 	setAttackSpeed(2.5f);
 	setHP(100);
-	setMovespeed(3.0f);
+	setMovespeed(1.5f);
+	setDamage(10);
 }
 
 StandardEnemy::StandardEnemy(Texture* tex) : Enemy(tex){
@@ -114,10 +171,18 @@ void StandardEnemy::moveEnemy(Vector2f playerpos) {
 	}
 }
 
+void StandardEnemy::collided(Player& player) {
+	if (getAttackTime() > getAttackSpeed()) {
+		player.takeDamage(getDamage());
+		resetAttackTimer();
+	}
+}
+
 void TankEnemy::initVars() {
 	setAttackSpeed(4.0f);
 	setHP(200);
-	setMovespeed(1.5f);
+	setMovespeed(1.f);
+	setDamage(30);
 }
 
 TankEnemy::TankEnemy(Texture* tex) : Enemy(tex) {
@@ -134,15 +199,27 @@ void TankEnemy::moveEnemy(Vector2f playerpos) {
 	}
 }
 
+void TankEnemy::collided(Player& player) {
+	if (getAttackTime() > getAttackSpeed()) {
+		player.takeDamage(getDamage());
+		resetAttackTimer();
+	}
+}
+
 void RangeEnemy::initVars() {
 	setAttackSpeed(2.0f);
 	setHP(75);
 	setMovespeed(2.75f);
+	int r = rand() % 26;
+	closest = 300.0f + r;
+	setDamage(5);
+	setshootCooldown(2.f);
 }
 
 RangeEnemy::RangeEnemy(Texture* tex) : Enemy(tex) {
 	initVars();
 	setSpriteColor(Color::Yellow);
+	initBulletTexture(&bulletTexture);
 }
 
 void RangeEnemy::moveEnemy(Vector2f playerpos) {
@@ -150,12 +227,54 @@ void RangeEnemy::moveEnemy(Vector2f playerpos) {
 	float dirLen = sqrtf(direction.x * direction.x + direction.y * direction.y);
 	if (dirLen > 0.0f) {
 		direction = direction / dirLen;
-		if (dirLen > 256.0f) {
+		
+		if (dirLen > closest) {
 			moveSprite(direction * getMovespeed());
 		}
 		else if (dirLen < 220.0f) {
 			moveSprite(direction * -getMovespeed() * 1.42f);
 		}
+		else {
+			if (shootTimer.getElapsedTime().asSeconds() >= shootCooldown) {
+				Bullet newBullet(bulletTexture, getSpritePos(), playerpos);
+				bullets.push_back(newBullet);
+				shootTimer.restart();
+			}
+		}
 	}
 	
+}
+
+void RangeEnemy::collided(Player& player) {}
+
+void RangeEnemy::initBulletTexture(Texture* tex) {
+	bulletTexture.loadFromFile("gfx/EnemyBullet.png");
+}
+
+void RangeEnemy::updateBullets() {
+	for(size_t i = 0; i < bullets.size(); ) {
+		bullets[i].update();
+
+		if (bullets[i].getPos().x < 0 || bullets[i].getPos().x > 1280 ||
+			bullets[i].getPos().y < 0 || bullets[i].getPos().y > 720) {
+			bullets.erase(bullets.begin() + i);
+		}
+		else {
+			i++;
+		}
+	}
+}
+
+void RangeEnemy::renderBullets(RenderTarget* target) {
+	for (auto& bullet : bullets) {
+		bullet.render(target);
+	}
+}
+
+std::vector<Bullet>& RangeEnemy::getBullets() {
+	return bullets;
+}
+
+void RangeEnemy::setshootCooldown(float x) {
+	shootCooldown = x;
 }
