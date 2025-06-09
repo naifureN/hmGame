@@ -67,6 +67,16 @@ void Game::initButtons(bool startMode)
 
 
 
+void Game::resetGame() {
+	
+	endGame = false;
+	bullets.clear();
+	spawner.getEnemies().clear();      
+	/*playersetPosition(Vector2f(640, 600));  */
+
+}
+
+
 const bool Game::running() const {
 	return this->runningbool;
 }
@@ -146,7 +156,8 @@ void Game::updateButtons()
 				return;
 			}
 			else if (button->getText() == "RESTART") {
-
+				resetGame();
+				return;
 			}
 		
 		}

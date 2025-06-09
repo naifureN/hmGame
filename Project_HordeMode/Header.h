@@ -40,6 +40,7 @@ public:
 	Game();
 	~Game();
 
+	void resetGame();
 	const bool running() const;
 	void pollEvents();
 
