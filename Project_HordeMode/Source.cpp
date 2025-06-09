@@ -21,6 +21,12 @@ void Game::initFonts(){
 }
 
 void Game::initText(){
+	this->startText.setFont(this->font);
+	this->startText.setCharacterSize(60);
+	this->startText.setFillColor(Color::Red);
+	this->startText.setString("HORDE MODE");
+	this->startText.setOrigin(startText.getGlobalBounds().width / 2, startText.getGlobalBounds().height / 2);
+	this->startText.setPosition(640.f, 120.f);
 	this->endGameText.setFont(this->font);
 	this->endGameText.setCharacterSize(60);
 	this->endGameText.setFillColor(Color::Red);
@@ -37,14 +43,22 @@ void Game::initButtons()
 
 	float centerX = 1280.f / 2.f;
 	float gameOverY = 280.f;
-	float spacing = 50.f;
+	
+	buttons.emplace_back(
+		std::make_unique<Button>(
+			centerX,
+			gameOverY+30.f,               
+			100.f, 100.f,
+			"RESTART"));
 
 	buttons.emplace_back(
 		std::make_unique<Button>(
-			centerX,                 // œrodek X
-			gameOverY + spacing,     // œrodek Y (pod napisem)
-			0.f, 0.f,                // wymiary tymczasowe – zaraz zostan¹ nadpisane
+			centerX,                
+			gameOverY + 130.f,     
+			100.f, 100.f,               
 			"EXIT"));
+	
+	
 }
 
 
@@ -67,7 +81,7 @@ void Game::pollEvents() {
 			}
 			if (this->evnt.key.code == sf::Keyboard::K) {
 				this->endGame=true;
-				cout << "ENDGAME USTAWIONE NA TRUE" << endl;
+				/*cout << "ENDGAME USTAWIONE NA TRUE" << endl;*/
 			}
 			break;
 		case sf::Event::MouseButtonPressed:
@@ -112,7 +126,8 @@ void Game::updateButtons()
 	bool mouseLeftPressed = sf::Mouse::isButtonPressed(sf::Mouse::Left);
 
 	for (auto& button : buttons) {
-		button->update(mousePos, mouseLeftPressedLastFrame);
+		
+		button->update(mousePos, this->mouseLeftPressedLastFrame);
 
 		if (button->isClicked()) {
 			std::cout << "Kliknieto przycisk: " << button->getText() << std::endl;
@@ -121,10 +136,14 @@ void Game::updateButtons()
 				this->window.close();
 				return;
 			}
+			else if (button->getText() == "RESTART") {
+
+			}
+		
 		}
 	}
 
-	// Po update wszystkich przycisków
+	
 	mouseLeftPressedLastFrame = mouseLeftPressed;
 }
 
@@ -138,7 +157,7 @@ void Game::update() {
 		this->spawner.updateEnemies(player.getPos());
 	}
 	if (this->getEndGame()) {
-		std::cout << "GAME OVER — updateButtons() wywo³ane" << std::endl;
+		/*std::cout << "GAME OVER — updateButtons() wywo³ane" << std::endl;*/
 		updateButtons();
 	}
 
@@ -160,6 +179,7 @@ void Game::render() {
 	this->player.render(&this->window);
 	this->spawner.renderEnemies(&this->window);
 	for (auto& b : bullets) b->render(&window);
+	
 
 
 	if (this->getEndGame()) {
@@ -170,6 +190,7 @@ void Game::render() {
 		this->window.draw(endGameText);
 		this->renderButtons();
 	}
+	this->window.draw(startText);
 	this->window.display();
 }
 

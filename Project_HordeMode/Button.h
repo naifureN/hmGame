@@ -10,9 +10,8 @@ protected:
 	Font font;
 	Text text;
 
-	bool isPressed;
 	bool isHovered;
-	bool wasPressedLastFrame = false;
+	bool prevFramePressed{ false };
 
 public:
 	Button(float x, float y, float width, float height, const string& buttonText = "");

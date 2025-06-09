@@ -4,16 +4,15 @@ Button::Button(float x, float y, float width, float height, const string& button
 {
     initFonts();
 
-    // chwilowy rozmiar, zaraz i tak go dopasujemy w setText()
+    
     shape.setSize(sf::Vector2f(width, height));
 
-    // ORIGIN = œrodek
     shape.setOrigin(shape.getSize().x / 2.f, shape.getSize().y / 2.f);
-    shape.setPosition(x, y);        // <- x,y to TERAZ ŒRODEK
+    shape.setPosition(x, y);        
 
     shape.setFillColor(Color::Transparent);
 
-    initText(buttonText);           // tu dopasujemy finalny rozmiar
+    initText(buttonText);           
 }
 
 
@@ -40,36 +39,36 @@ void Button::setText(const string& buttonText)
 	float paddingX = 20.f;
 	float paddingY = 10.f;
 
-	// dopasuj rozmiar hitboxu
+	
 	shape.setSize({ bounds.width + paddingX * 2, bounds.height + paddingY * 2 });
 
-	// uaktualnij origin na œrodek nowego kszta³tu
+	
 	shape.setOrigin(shape.getSize().x / 2.f, shape.getSize().y / 2.f);
 
-	// wycentruj tekst wewn¹trz prostok¹ta
+	
 	text.setOrigin(bounds.left + bounds.width / 2.f, bounds.top + bounds.height / 2.f);
-	text.setPosition(shape.getPosition());   // bo shape.pos to ju¿ œrodek
+	text.setPosition(shape.getPosition());   
 }
 
 
 
 void Button::update(Vector2f& mousePos, bool mouseLeftPressedLastFrame)
 {
-	this->isHovered = this->shape.getGlobalBounds().contains(mousePos);
-	this->isPressed = false;
+    this->isHovered = this->shape.getGlobalBounds().contains(mousePos);
+  
 
-	if (isHovered) {
-		shape.setFillColor(Color(102, 99, 99));
-		if (Mouse::isButtonPressed(Mouse::Left)) {
-			shape.setFillColor(Color(158, 157, 157));
-			this->isPressed = true;
-		}
-	}
-	else {
-		shape.setFillColor(Color::Black);
-	}
+    if (isHovered) {
+        shape.setFillColor(Color(102, 99, 99));
+        if (Mouse::isButtonPressed(Mouse::Left)) {
+            shape.setFillColor(Color(158, 157, 157));
+      
+        }
+    }
+    else {
+        shape.setFillColor(Color::Black);
+    }
 
-	
+	this->prevFramePressed = mouseLeftPressedLastFrame;
 }
 
 void Button::render(sf::RenderTarget* target)
@@ -80,10 +79,11 @@ void Button::render(sf::RenderTarget* target)
 
 bool Button::isClicked() const
 {
-	return this->isHovered && !wasPressedLastFrame && sf::Mouse::isButtonPressed(sf::Mouse::Left);
+    return  isHovered && !prevFramePressed && sf::Mouse::isButtonPressed(sf::Mouse::Left); 
 }
+
 
 string Button::getText() const
 {
-	return this->text.getString().toAnsiString();
+	return this->text.getString().toAnsiString();//Ma zostac toANsi bo sie zjebie inaczej
 }
