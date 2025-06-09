@@ -12,6 +12,8 @@ void Game::initVars() {
 	this->endGame = false;
 	this->shootDelay = 0.001f;
 	this->bulletTexture.loadFromFile("gfx/bullet.png");
+	this->backgroundTexture.loadFromFile("gfx/background.png");
+	this->backgroundSprite.setTexture(backgroundTexture);
 	std::srand(static_cast<unsigned>(std::time(nullptr)));
 	initObstacles();
 }
@@ -24,15 +26,15 @@ void Game::initObstacles() {
 	obstacles.clear();
 
 	std::srand(static_cast<unsigned>(std::time(nullptr)));
-	int obstacle_count = 2 + (std::rand() % 5); // 2-6 przeszkód
+	int obstacle_count = 2 + (std::rand() % 5); // 2-6 przeszkÃ³d
 
 	for (int i = 0; i < obstacle_count; ++i) {
 		auto obstacle = std::make_unique<sf::RectangleShape>();
 
 		// Ustawienia przeszkody
 		obstacle->setSize(sf::Vector2f(
-			50 + (std::rand() % 150),  // szerokoœæ 50-200
-			30 + (std::rand() % 70)     // wysokoœæ 30-100
+			50 + (std::rand() % 150),  // szerokoÅ“Ã¦ 50-200
+			30 + (std::rand() % 70)     // wysokoÅ“Ã¦ 30-100
 		));
 
 		obstacle->setPosition(
@@ -113,7 +115,7 @@ void Game::update() {
 			if (len != 0)
 				dir /= len;
 
-			// Cofamy po kroku a¿ wyjdzie z kolizji
+			// Cofamy po kroku aÂ¿ wyjdzie z kolizji
 			const float maxPush = 10.f;
 			const float step = 0.5f;
 
@@ -153,6 +155,7 @@ void Game::Enemyshoot() {
 
 void Game::render() {
 	this->window.clear();
+	this->window.draw(this->backgroundSprite);
 	for (size_t i = 0; i < obstacles.size();++i) {
 		window.draw(*obstacles[i]);
 	}
@@ -182,7 +185,7 @@ bool Game::checkRotatedCollision(const std::unique_ptr<sf::RectangleShape>& rect
 	const sf::Transform& transform = rect->getTransform();
 	sf::Transform inverseTransform = transform.getInverse();
 
-	// Przekszta³cenie wszystkich 4 rogów prostok¹ta `bounds` do lokalnego uk³adu wspó³rzêdnych `rect`
+	// PrzeksztaÂ³cenie wszystkich 4 rogÃ³w prostokÂ¹ta `bounds` do lokalnego ukÂ³adu wspÃ³Â³rzÃªdnych `rect`
 	sf::Vector2f points[4] = {
 		inverseTransform.transformPoint({bounds.left, bounds.top}),
 		inverseTransform.transformPoint({bounds.left + bounds.width, bounds.top}),
@@ -190,7 +193,7 @@ bool Game::checkRotatedCollision(const std::unique_ptr<sf::RectangleShape>& rect
 		inverseTransform.transformPoint({bounds.left + bounds.width, bounds.top + bounds.height})
 	};
 
-	// Wyznaczenie lokalnego bounding boxa z tych punktów
+	// Wyznaczenie lokalnego bounding boxa z tych punktÃ³w
 	float minX = points[0].x, maxX = points[0].x;
 	float minY = points[0].y, maxY = points[0].y;
 	for (int i = 1; i < 4; ++i) {

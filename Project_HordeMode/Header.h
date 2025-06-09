@@ -9,6 +9,8 @@
 class Game {
 	sf::RenderWindow window;
 	sf::Event evnt;
+	Texture backgroundTexture;
+	Sprite backgroundSprite;
 	bool endGame;
 	std::vector<std::unique_ptr<Bullet>> bullets;
 	Texture bulletTexture;
