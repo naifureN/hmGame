@@ -76,6 +76,8 @@ void Game::resetGame() {
 	bullets.clear();
 	spawner.getEnemies().clear();      
 	/*playersetPosition(Vector2f(640, 600));  */
+	obstacles.clear();
+	initObstacles();
 
 }
 
@@ -88,30 +90,26 @@ void Game::initObstacles() {
 	obstacles.clear();
 
 	std::srand(static_cast<unsigned>(std::time(nullptr)));
-	int obstacle_count = 2 + (std::rand() % 5); // 2-6 przeszkód
+	int obstacle_count = 5 + (std::rand() % 6); // 2-6 przeszkód
 
 	for (int i = 0; i < obstacle_count; ++i) {
 		auto obstacle = std::make_unique<sf::RectangleShape>();
 
 		// Ustawienia przeszkody
-		obstacle->setSize(sf::Vector2f(
-			50 + (std::rand() % 150),  // szerokoœæ 50-200
-			30 + (std::rand() % 70)     // wysokoœæ 30-100
-		));
+		obstacle->setSize(sf::Vector2f(40 + (std::rand() % 150),  30 + (std::rand() % 70)));
+		float xpos =  std::rand() % window.getSize().x;
+		float ypos =  std::rand() % window.getSize().y;
 
-		obstacle->setPosition(
-			100 + (std::rand() % (window.getSize().x - 200)),
-			100 + (std::rand() % (window.getSize().y - 200))
-		);
+		while(((xpos < 790 && xpos>490) || (ypos < 510 && ypos>210))) {
+			xpos = std::rand() % window.getSize().x;
+			ypos = std::rand() % window.getSize().y ;
 
-		obstacle->setRotation(std::rand() % 360);
-		obstacle->setFillColor(sf::Color(
-			50 + (std::rand() % 150),
-			50 + (std::rand() % 150),
-			50 + (std::rand() % 150)
-		));
-
-		obstacles.push_back(std::move(obstacle));
+		}
+			obstacle->setPosition(xpos, ypos);
+			obstacle->setRotation(std::rand() % 360);
+			obstacle->setFillColor(sf::Color(50 + (std::rand() % 150), 50 + (std::rand() % 150), 50 + (std::rand() % 150)));
+	
+			obstacles.push_back(std::move(obstacle));
 	}
 }
 
