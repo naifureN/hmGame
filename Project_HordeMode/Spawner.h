@@ -3,8 +3,14 @@
 #include "Enemy.h"
 using namespace sf;
 class Spawner {
-	Texture EnemyTexture;
+	Texture EnemyTexture = Texture();
 	std::vector<std::unique_ptr<Enemy>> enemies;
+	int waveNumber = 6;
+	int enemiesToSpawn = 0;
+	int enemiesSpawned = 0;
+	int killedThisTurn = 0;
+	sf::Clock spawnClock = Clock();
+	float spawnInterval = 1.0f;
 public:
 	Spawner();
 	~Spawner();
@@ -12,5 +18,7 @@ public:
 	void updateEnemies(Vector2f playerpos, Sprite playerSprite, Player& player);
 	void renderEnemies(RenderWindow* window); 
 	std::vector<std::unique_ptr<Enemy>>& getEnemies();
+	void startNextWave();
+	bool isWaveCleared() const;
 };
 
