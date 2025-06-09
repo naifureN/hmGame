@@ -150,7 +150,6 @@ void StandardEnemy::moveEnemy(Vector2f playerpos) {
 void StandardEnemy::collided(Player& player) {
 	if (getAttackTime() > getAttackSpeed()) {
 		player.takeDamage(getDamage());
-		std::cout << "hit! " << std::endl;
 		resetAttackTimer();
 	}
 }
@@ -179,7 +178,6 @@ void TankEnemy::moveEnemy(Vector2f playerpos) {
 void TankEnemy::collided(Player& player) {
 	if (getAttackTime() > getAttackSpeed()) {
 		player.takeDamage(getDamage());
-		std::cout << "hit! " << std::endl;
 		resetAttackTimer();
 	}
 }

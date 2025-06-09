@@ -64,9 +64,6 @@ void Game::pollEvents() {
 				runningbool = false;
 				this->window.close();
 			}
-			if (this->evnt.key.code == sf::Keyboard::Space) {
-				this->spawner.spawn();
-			}
 			break;
 		case sf::Event::MouseButtonPressed:
 			if (evnt.mouseButton.button == Mouse::Left)
@@ -107,6 +104,9 @@ void Game::update() {
 	
 	updateBullets();
 	this->spawner.updateEnemies(player.getPos(), player.getSprite(), player);
+	this->spawner.spawn();
+	if (this->spawner.isWaveCleared()) {
+		this->spawner.startNextWave();
 	for (auto& enemy : spawner.getEnemies()) {
 		if (checkCollisionWithObstacles(enemy->getBounds())) {
 			Vector2f dir = enemy->getEnemyPosition() - player.getPos();
