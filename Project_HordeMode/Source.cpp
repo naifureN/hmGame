@@ -244,7 +244,6 @@ void Game::update() {
 	}
 
 	if (checkCollisionWithObstacles(player.getPlayerBounds())) {
-		std::cout << "Collision" << std::endl;
 		player.PushBack();
 	}
 

@@ -14,10 +14,11 @@ class Enemy {
 
 	int damage;
 
-
-private:
 	float attackSpeed;
 	Clock attackTimer;
+protected:
+
+	bool AngleDir;
 
 public:
 	Enemy(Texture* tex);

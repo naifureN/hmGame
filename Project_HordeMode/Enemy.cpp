@@ -156,6 +156,12 @@ void StandardEnemy::initVars() {
 	setHP(100);
 	setMovespeed(1.5f);
 	setDamage(10);
+	if (rand() % 2 == 1) {
+		AngleDir = true;
+	}
+	else {
+		AngleDir = false;
+	}
 }
 
 StandardEnemy::StandardEnemy(Texture* tex) : Enemy(tex){
@@ -164,7 +170,15 @@ StandardEnemy::StandardEnemy(Texture* tex) : Enemy(tex){
 
 void StandardEnemy::moveEnemy(Vector2f playerpos) {
 	Vector2f direction = playerpos - getSpritePos();
-	float spread = 100.f;
+	float spread = 50.f;
+	float RandDegr = (rand() % 10) + 1;
+	if (AngleDir == 1) {
+		RandDegr *= -1;
+	}
+	float rad = RandDegr * 3.14 / 180;
+	float x = direction.x * cos(rad) - direction.y * sin(rad);
+	float y = direction.x * sin(rad) + direction.y * cos(rad);
+	direction = Vector2f(x, y);
 	if (noiseTimer.getElapsedTime().asSeconds() > 1.f) {
 
 	std::random_device rd;
@@ -196,6 +210,12 @@ void TankEnemy::initVars() {
 	setHP(200);
 	setMovespeed(1.f);
 	setDamage(30);
+	if (rand() % 2 == 1) {
+		AngleDir = true;
+	}
+	else {
+		AngleDir = false;
+	}
 }
 
 TankEnemy::TankEnemy(Texture* tex) : Enemy(tex) {
@@ -205,7 +225,15 @@ TankEnemy::TankEnemy(Texture* tex) : Enemy(tex) {
 
 void TankEnemy::moveEnemy(Vector2f playerpos) {
 	Vector2f direction = playerpos - getSpritePos();
-	float spread = 100.f;
+	float spread = 50.f;
+	float RandDegr = (rand() % 10) + 1;
+	if (AngleDir == 1) {
+		RandDegr *= -1;
+	}
+	float rad = RandDegr * 3.14 / 180;
+	float x = direction.x * cos(rad) - direction.y * sin(rad);
+	float y = direction.x * sin(rad) + direction.y * cos(rad);
+	direction = Vector2f(x, y);
 	if (noiseTimer.getElapsedTime().asSeconds() > 1.f) {
 
 		std::random_device rd;
@@ -240,6 +268,12 @@ void RangeEnemy::initVars() {
 	closest = 300.0f + r;
 	setDamage(5);
 	setshootCooldown(2.f);
+	if (rand() % 2 == 1) {
+		AngleDir = true;
+	}
+	else {
+		AngleDir = false;
+	}
 }
 
 RangeEnemy::RangeEnemy(Texture* tex) : Enemy(tex) {
@@ -250,14 +284,21 @@ RangeEnemy::RangeEnemy(Texture* tex) : Enemy(tex) {
 
 void RangeEnemy::moveEnemy(Vector2f playerpos) {
 	Vector2f direction = playerpos - getSpritePos();
-
-	float spread = 100.f;
-	Vector2f directionRand = direction;
-	if (noiseTimer.getElapsedTime().asSeconds() > 1.f) {
-
+	float spread = 50.f;
 	std::random_device rd;
 	std::mt19937 gen(rd());
 	std::uniform_real_distribution<float> dist(-spread, spread);
+	float RandDegr = (rand() % 10)+1;
+	if (AngleDir == 1) {
+		RandDegr *= -1;
+	}
+	float rad = RandDegr* 3.14 / 180;
+	float x = direction.x * cos(rad) - direction.y * sin(rad);
+	float y = direction.x * sin(rad) + direction.y * cos(rad);
+	direction = Vector2f(x, y);
+	Vector2f directionRand = direction;
+	if (noiseTimer.getElapsedTime().asSeconds() > 1.f) {
+
 	directionRand.x += dist(gen);
 	directionRand.y += dist(gen);
 	}
