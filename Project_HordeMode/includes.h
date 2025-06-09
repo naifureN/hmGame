@@ -1,7 +1,7 @@
 #pragma once
-#include<vector>
+#include <vector>
 #include <thread>
-#include<chrono>
+#include <chrono>
 #include <math.h>
 #include <SFML/Graphics.hpp>
 #include <SFML/System.hpp>
@@ -11,5 +11,6 @@
 #include <iostream>
 #include <cstdlib>
 #include <ctime>
+#include <random> 
 
 using namespace sf;

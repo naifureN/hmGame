@@ -14,6 +14,7 @@ class Enemy {
 
 	int damage;
 
+
 private:
 	float attackSpeed;
 	Clock attackTimer;
@@ -22,6 +23,8 @@ public:
 	Enemy(Texture* tex);
 	virtual ~Enemy(); //nie przesuwaæ do virtualek bo coœ siê zjebie
 
+	Clock noiseTimer;
+	Vector2f directionNoise;
 
 	void update(Vector2f playerpos, Sprite playerSprite, Player& player);
 	void render(sf::RenderTarget* target);

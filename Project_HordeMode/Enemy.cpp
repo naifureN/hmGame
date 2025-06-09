@@ -164,9 +164,22 @@ StandardEnemy::StandardEnemy(Texture* tex) : Enemy(tex){
 
 void StandardEnemy::moveEnemy(Vector2f playerpos) {
 	Vector2f direction = playerpos - getSpritePos();
-	float dirLen = sqrtf(direction.x * direction.x + direction.y * direction.y);
+	float spread = 100.f;
+	if (noiseTimer.getElapsedTime().asSeconds() > 1.f) {
+
+	std::random_device rd;
+	std::mt19937 gen(rd());
+	std::uniform_real_distribution<float> dist(-spread, spread);
+
+	directionNoise = { dist(gen), dist(gen) };
+	noiseTimer.restart();
+	}
+	
+	direction += directionNoise;
+
+	float dirLen = std::sqrt(direction.x * direction.x + direction.y * direction.y);
 	if (dirLen > 0.0f) {
-		direction = direction / dirLen;
+		direction /= dirLen;
 		moveSprite(direction * getMovespeed());
 	}
 }
@@ -192,7 +205,20 @@ TankEnemy::TankEnemy(Texture* tex) : Enemy(tex) {
 
 void TankEnemy::moveEnemy(Vector2f playerpos) {
 	Vector2f direction = playerpos - getSpritePos();
-	float dirLen = sqrtf(direction.x * direction.x + direction.y * direction.y);
+	float spread = 100.f;
+	if (noiseTimer.getElapsedTime().asSeconds() > 1.f) {
+
+		std::random_device rd;
+		std::mt19937 gen(rd());
+		std::uniform_real_distribution<float> dist(-spread, spread);
+
+		directionNoise = { dist(gen), dist(gen) };
+		noiseTimer.restart();
+	}
+
+	direction += directionNoise;
+
+	float dirLen = std::sqrt(direction.x * direction.x + direction.y * direction.y);
 	if (dirLen > 0.0f) {
 		direction = direction / dirLen;
 		moveSprite(direction * getMovespeed());
@@ -224,12 +250,25 @@ RangeEnemy::RangeEnemy(Texture* tex) : Enemy(tex) {
 
 void RangeEnemy::moveEnemy(Vector2f playerpos) {
 	Vector2f direction = playerpos - getSpritePos();
-	float dirLen = sqrtf(direction.x * direction.x + direction.y * direction.y);
+
+	float spread = 100.f;
+	Vector2f directionRand = direction;
+	if (noiseTimer.getElapsedTime().asSeconds() > 1.f) {
+
+	std::random_device rd;
+	std::mt19937 gen(rd());
+	std::uniform_real_distribution<float> dist(-spread, spread);
+	directionRand.x += dist(gen);
+	directionRand.y += dist(gen);
+	}
+
+	float dirLen = std::sqrt(direction.x * direction.x + direction.y * direction.y);
 	if (dirLen > 0.0f) {
-		direction = direction / dirLen;
-		
+		 direction /= dirLen;
+		 directionRand /= dirLen;
+
 		if (dirLen > closest) {
-			moveSprite(direction * getMovespeed());
+			moveSprite(directionRand * getMovespeed()); 
 		}
 		else if (dirLen < 220.0f) {
 			moveSprite(direction * -getMovespeed() * 1.42f);
@@ -242,7 +281,6 @@ void RangeEnemy::moveEnemy(Vector2f playerpos) {
 			}
 		}
 	}
-	
 }
 
 void RangeEnemy::collided(Player& player) {}
