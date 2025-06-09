@@ -4,6 +4,8 @@
 using namespace sf;
 class Spawner {
 	Texture EnemyTexture = Texture();
+	Texture StandardTexture = Texture();
+	Texture RangeTexture = Texture();
 	std::vector<std::unique_ptr<Enemy>> enemies;
 	int waveNumber = 0;
 	int enemiesToSpawn = 0;

@@ -208,7 +208,7 @@ void Game::update() {
 	}
 
 	if (this->getEndGame() == false) {
-		this->player.update(&this->window);
+		this->player.update(&this->window, Mouse::getPosition(window));
 		updateBullets();
 		this->spawner.updateEnemies(player.getPos(), player.getSprite(), player);
 		this->spawner.spawn();

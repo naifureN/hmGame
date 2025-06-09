@@ -6,7 +6,6 @@ class Player
 {
 private:
 	Texture texture;
-	Sprite shape;
 	float movespeed;
 	Vector2f direction;
 	int hp;
@@ -20,13 +19,16 @@ private:
 	void initShape();
 	void initHpBar();
 	void updateHpbar();
+protected:
+	bool inverted = false;
+	Sprite shape;
 public:
 	Player(float x = 640.f, float y = 320.f);
 	~Player();
 
 	void updateInput();
 	void updateWindowBoundsCollision(sf::RenderTarget* target);
-	void update(sf::RenderTarget* target);
+	void update(sf::RenderTarget* target, Vector2i mousepos);
 	void render(sf::RenderTarget* target);
 	Vector2f normalize_vector(float vecx, float vecy);
 	const Vector2f& getPos() const;
