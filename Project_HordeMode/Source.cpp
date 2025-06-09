@@ -95,11 +95,11 @@ Game::~Game() {
 
 void Game::update() {
 	this->pollEvents();
-		this->player.update(&this->window);
-		if (checkCollisionWithObstacles(player.getPlayerBounds())) {
-			std::cout << "Collision" << std::endl;
-			player.PushBack();
-		}
+	this->player.update(&this->window);
+	if (checkCollisionWithObstacles(player.getPlayerBounds())) {
+		std::cout << "Collision" << std::endl;
+		player.PushBack();
+	}
 	
 	
 	updateBullets();
@@ -107,28 +107,28 @@ void Game::update() {
 	this->spawner.spawn();
 	if (this->spawner.isWaveCleared()) {
 		this->spawner.startNextWave();
-	for (auto& enemy : spawner.getEnemies()) {
-		if (checkCollisionWithObstacles(enemy->getBounds())) {
-			Vector2f dir = enemy->getEnemyPosition() - player.getPos();
+	}
+		for (auto& enemy : spawner.getEnemies()) {
+			if (checkCollisionWithObstacles(enemy->getBounds())) {
+				Vector2f dir = enemy->getEnemyPosition() - player.getPos();
 
-			float len = std::sqrt(dir.x * dir.x + dir.y * dir.y);
-			if (len != 0)
-				dir /= len;
+				float len = std::sqrt(dir.x * dir.x + dir.y * dir.y);
+				if (len != 0)
+					dir /= len;
 
-			// Cofamy po kroku a¿ wyjdzie z kolizji
-			const float maxPush = 10.f;
-			const float step = 0.5f;
+				// Cofamy po kroku a¿ wyjdzie z kolizji
+				const float maxPush = 10.f;
+				const float step = 0.5f;
 
-			for (float moved = 0.f; moved < maxPush; moved += step) {
-				enemy->EnemyPushBack(dir * step); // teraz przekazujemy gotowy krok
-				if (!checkCollisionWithObstacles(enemy->getBounds())) {
-					break;
+				for (float moved = 0.f; moved < maxPush; moved += step) {
+					enemy->EnemyPushBack(dir * step); // teraz przekazujemy gotowy krok
+					if (!checkCollisionWithObstacles(enemy->getBounds())) {
+						break;
+					}
 				}
 			}
 		}
-	}
-	this->Enemyshoot();
-
+		this->Enemyshoot();
 }
 
 void Game::Enemyshoot() {
