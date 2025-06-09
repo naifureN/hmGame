@@ -1,5 +1,7 @@
 #pragma once
 #include<vector>
+#include <thread>
+#include<chrono>
 #include <math.h>
 #include <SFML/Graphics.hpp>
 #include <SFML/System.hpp>
