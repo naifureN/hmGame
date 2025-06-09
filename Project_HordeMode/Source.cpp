@@ -96,12 +96,35 @@ Game::~Game() {
 
 void Game::update() {
 	this->pollEvents();
-	this->player.update(&this->window);
-	if (checkCollisionWithObstacles(player.getPlayerBounds())) {
-
-	}
+		this->player.update(&this->window);
+		if (checkCollisionWithObstacles(player.getPlayerBounds())) {
+			std::cout << "Collision" << std::endl;
+			player.PushBack();
+		}
+	
+	
 	updateBullets();
 	this->spawner.updateEnemies(player.getPos(), player.getSprite(), player);
+	for (auto& enemy : spawner.getEnemies()) {
+		if (checkCollisionWithObstacles(enemy->getBounds())) {
+			Vector2f dir = enemy->getEnemyPosition() - player.getPos();
+
+			float len = std::sqrt(dir.x * dir.x + dir.y * dir.y);
+			if (len != 0)
+				dir /= len;
+
+			// Cofamy po kroku a¿ wyjdzie z kolizji
+			const float maxPush = 10.f;
+			const float step = 0.5f;
+
+			for (float moved = 0.f; moved < maxPush; moved += step) {
+				enemy->EnemyPushBack(dir * step); // teraz przekazujemy gotowy krok
+				if (!checkCollisionWithObstacles(enemy->getBounds())) {
+					break;
+				}
+			}
+		}
+	}
 	this->Enemyshoot();
 
 }
@@ -117,8 +140,11 @@ void Game::Enemyshoot() {
 					player.takeDamage(ranged->getDamage());
 					bullets.erase(bullets.begin() + i);
 				}
+				else if(checkCollisionWithObstacles(bullets[i].getGlobalBounds())){
+					bullets.erase(bullets.begin() + i);
+				}
 				else {
-					++i;
+					i++;
 				}
 			}
 		}
@@ -153,16 +179,30 @@ bool Game::checkCollisionWithObstacles(const sf::FloatRect& bounds) const {
 }
 
 bool Game::checkRotatedCollision(const std::unique_ptr<sf::RectangleShape>& rect, const sf::FloatRect& bounds) const {
-	const sf::Transform& transform = rect->getTransform(); // UWAGA: rect-> zamiast rect.
+	const sf::Transform& transform = rect->getTransform();
 	sf::Transform inverseTransform = transform.getInverse();
 
-	sf::FloatRect rectLocal;
-	rectLocal.left = inverseTransform.transformPoint(bounds.left, bounds.top).x;
-	rectLocal.top = inverseTransform.transformPoint(bounds.left, bounds.top).y;
-	rectLocal.width = bounds.width;
-	rectLocal.height = bounds.height;
+	// Przekszta³cenie wszystkich 4 rogów prostok¹ta `bounds` do lokalnego uk³adu wspó³rzêdnych `rect`
+	sf::Vector2f points[4] = {
+		inverseTransform.transformPoint({bounds.left, bounds.top}),
+		inverseTransform.transformPoint({bounds.left + bounds.width, bounds.top}),
+		inverseTransform.transformPoint({bounds.left, bounds.top + bounds.height}),
+		inverseTransform.transformPoint({bounds.left + bounds.width, bounds.top + bounds.height})
+	};
 
-	return rect->getLocalBounds().intersects(rectLocal); // rect-> zamiast rect.
+	// Wyznaczenie lokalnego bounding boxa z tych punktów
+	float minX = points[0].x, maxX = points[0].x;
+	float minY = points[0].y, maxY = points[0].y;
+	for (int i = 1; i < 4; ++i) {
+		if (points[i].x < minX) minX = points[i].x;
+		if (points[i].x > maxX) maxX = points[i].x;
+		if (points[i].y < minY) minY = points[i].y;
+		if (points[i].y > maxY) maxY = points[i].y;
+	}
+
+	sf::FloatRect rectLocal(minX, minY, maxX - minX, maxY - minY);
+
+	return rect->getLocalBounds().intersects(rectLocal);
 }
 
 void Game::shoot() {
