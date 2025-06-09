@@ -9,8 +9,31 @@ void Enemy::render(sf::RenderTarget* target) {
 }
 Enemy::Enemy(Texture* tex): hp(100), maxHp(100) {
 	this->sprite.setTexture(*tex);
-	int rx = rand() % 500 + 40;
-	this->sprite.setPosition(Vector2f(rx, 100));
+	int dir = rand() % 4;
+	int rx, ry;
+	switch (dir) {
+	case 0:
+		rx = -(rand() % 40 + 40);
+		ry = rand() % 640 + 40;
+		this->sprite.setPosition(Vector2f(rx, ry));
+		break;
+	case 1:
+		rx = rand() % 40 + 40 + 1280;
+		ry = rand() % 640 + 40;
+		this->sprite.setPosition(Vector2f(rx, ry));
+		break;
+	case 2:
+		rx = rand() % 1200 + 40;
+		ry = -(rand() % 40 + 40);
+		this->sprite.setPosition(Vector2f(rx, ry));
+		break;
+	case 3:
+		rx = rand() % 1200 + 40;
+		ry = rand() % 40 + 40 + 720;
+		this->sprite.setPosition(Vector2f(rx, ry));
+		break;
+	}
+
 	hpBarBackground.setPosition(sprite.getPosition());
 	hpBarFill.setPosition(sprite.getPosition()); // x te same a y-10 jest ideolo
 

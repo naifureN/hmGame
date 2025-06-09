@@ -21,7 +21,7 @@ private:
 	void initHpBar();
 	void updateHpbar();
 public:
-	Player(float x = 960.f, float y = 540.f);
+	Player(float x = 640.f, float y = 320.f);
 	~Player();
 
 	void updateInput();

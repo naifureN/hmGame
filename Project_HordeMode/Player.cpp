@@ -31,7 +31,7 @@ void Player::initHpBar() {
 
 
 Player::Player(float x, float y) : hp(100), maxHp(100) {
-	this->shape.setPosition(x, y);
+	this->shape.setPosition(640.f, 320.f);
 	this->initVars();
 	this->initShape();
 	this->initHpBar();
