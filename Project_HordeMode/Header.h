@@ -9,6 +9,8 @@
 class Game {
 	sf::RenderWindow window;
 	sf::Event evnt;
+	Texture backgroundTexture;
+	Sprite backgroundSprite;
 	bool endGame;
 	std::vector<std::unique_ptr<Bullet>> bullets;
 	Texture bulletTexture;
@@ -17,12 +19,16 @@ class Game {
 	Clock shootClock;
 	float shootDelay;
 	bool runningbool = true;
+	std::vector<std::unique_ptr<RectangleShape>> obstacles;
 
 	void initWindow();
 	void initVars();
+	void initObstacles();
 
 public:
 	Game();
+	Game(const Game&) = delete;            // Blokada kopiowania
+	Game& operator=(const Game&) = delete; // Blokada przypisania
 	~Game();
 
 	const bool running() const;
@@ -30,6 +36,11 @@ public:
 
 	void update();
 	void render();
+
+	bool checkCollisionWithObstacles(const sf::FloatRect& bounds) const;
+
+	bool checkRotatedCollision(const std::unique_ptr<sf::RectangleShape>& rect, const sf::FloatRect& bounds) const;
+
 
 	void shoot();
 	void updateBullets();

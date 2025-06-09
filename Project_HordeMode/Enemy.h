@@ -31,6 +31,8 @@ public:
 	void moveSprite(Vector2f movement);
 	bool checkCollision(const sf::Sprite& otherSprite);
 	void resetAttackTimer();
+	void EnemyPushBack(const Vector2f& pushVec);
+	const Vector2f& getEnemyPosition() const;
 
 	// virtualki
 	virtual void moveEnemy(Vector2f playerpos) = 0;

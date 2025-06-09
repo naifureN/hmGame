@@ -157,6 +157,7 @@
     <ClInclude Include="Enemy.h" />
     <ClInclude Include="includes.h" />
     <ClInclude Include="Player.h" />
+    <ClInclude Include="Source.h" />
     <ClInclude Include="Spawner.h" />
   </ItemGroup>
   <ItemGroup>

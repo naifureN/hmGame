@@ -35,4 +35,8 @@ public:
 	const Sprite& getSprite() const;
 
 	FloatRect getPlayerBounds() const;
+	float getSpeed() const;
+	Vector2f getDirection() const;
+
+	void PushBack();
 };
