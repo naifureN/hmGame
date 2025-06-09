@@ -11,6 +11,7 @@ private:
 	sf::RenderWindow window;
 	sf::Event evnt;
 	bool endGame;
+	bool startGame;
 	std::vector<std::unique_ptr<Bullet>> bullets;
 	vector<std::unique_ptr<Button>> buttons;
 	Texture bulletTexture;
@@ -30,7 +31,7 @@ private:
 	void initVars();
 	void initFonts();
 	void initText();
-	void initButtons();
+	void initButtons(bool startMode=false);
 
 
 public:

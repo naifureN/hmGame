@@ -10,6 +10,7 @@ void Game::initWindow() {
 }
 
 void Game::initVars() {
+	this->startGame = true;
 	this->endGame = false;
 	this->shootDelay = 0.001f;
 	this->bulletTexture.loadFromFile("gfx/bullet.png");
@@ -37,27 +38,29 @@ void Game::initText(){
 
 }
 
-void Game::initButtons()
+void Game::initButtons(bool startMode)
 {
 	buttons.clear();
 
 	float centerX = 1280.f / 2.f;
-	float gameOverY = 280.f;
-	
+	float menuY = 280.f;
+
 	buttons.emplace_back(
 		std::make_unique<Button>(
 			centerX,
-			gameOverY+30.f,               
+			menuY + 30.f,
 			100.f, 100.f,
-			"RESTART"));
+			startMode ? "START" : "RESTART"));
 
 	buttons.emplace_back(
 		std::make_unique<Button>(
 			centerX,                
-			gameOverY + 130.f,     
+			menuY + 130.f,     
 			100.f, 100.f,               
 			"EXIT"));
+
 	
+
 	
 }
 
@@ -110,7 +113,7 @@ Game::Game() {
 	this->initVars();
 	this->initFonts();
 	this->initText();
-	this->initButtons();
+	this->initButtons(true);
 }
 
 Game::~Game() {
@@ -131,7 +134,12 @@ void Game::updateButtons()
 
 		if (button->isClicked()) {
 			std::cout << "Kliknieto przycisk: " << button->getText() << std::endl;
-			if (button->getText() == "EXIT") {
+			if (button->getText() == "START") {
+				startGame = false;
+				initButtons(false);
+				return;
+			}
+			else if (button->getText() == "EXIT") {
 				this->runningbool = false;
 				this->window.close();
 				return;
@@ -151,6 +159,11 @@ void Game::updateButtons()
 
 void Game::update() {
 	this->pollEvents();
+	if (this->startGame==true) {             
+		updateButtons();          
+		return;                   
+	}
+
 	if (this->getEndGame() == false) {
 		this->player.update(&this->window);
 		updateBullets();
@@ -174,24 +187,31 @@ void Game::renderButtons()
 }
 
 void Game::render() {
-	this->window.clear();
+	window.clear();
 
-	this->player.render(&this->window);
-	this->spawner.renderEnemies(&this->window);
-	for (auto& b : bullets) b->render(&window);
-	
-
-
-	if (this->getEndGame()) {
-		sf::RectangleShape overlay(sf::Vector2f(window.getSize()));
-		overlay.setFillColor(sf::Color(0, 0, 0, 150));
-		this->window.draw(overlay);
-
-		this->window.draw(endGameText);
-		this->renderButtons();
+	if (startGame==true)
+	{
+		this->window.draw(startText);   
+		renderButtons();          
 	}
-	this->window.draw(startText);
+	else
+	{
+		
+		this->player.render(&window);
+		this->spawner.renderEnemies(&window);
+		for (auto& bullet : bullets) bullet->render(&window);
+
+		if (endGame==true) {            
+			sf::RectangleShape overlay(sf::Vector2f(window.getSize()));
+			overlay.setFillColor(sf::Color(0, 0, 0, 150));
+			this->window.draw(overlay);
+
+			this->window.draw(endGameText);
+			renderButtons();      
+		}
+	}
 	this->window.display();
+
 }
 
 void Game::shoot() {
