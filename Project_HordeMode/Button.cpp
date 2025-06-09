@@ -1,7 +1,6 @@
 #include "Button.h"
 
-Button::Button(float x, float y, float width, float height, const string& buttonText)
-{
+Button::Button(float x, float y, float width, float height, const string& buttonText) {
     initFonts();
 
     
@@ -18,21 +17,18 @@ Button::Button(float x, float y, float width, float height, const string& button
 
 Button::~Button() {}
 
-void Button::initFonts()
-{
+void Button::initFonts() {
 	this->font.loadFromFile("Fonts/Symtext.ttf");
 }
 
-void Button::initText(const string& buttonText)
-{
+void Button::initText(const string& buttonText) {
 	this->text.setFont(this->font);
 	this->text.setCharacterSize(60);
 	this->text.setFillColor(Color::Red);
 	this->setText(buttonText);
 }
 
-void Button::setText(const string& buttonText)
-{
+void Button::setText(const string& buttonText) {
 	this->text.setString(buttonText);
 	auto bounds = text.getLocalBounds();
 
@@ -52,8 +48,7 @@ void Button::setText(const string& buttonText)
 
 
 
-void Button::update(Vector2f& mousePos, bool mouseLeftPressedLastFrame)
-{
+void Button::update(Vector2f& mousePos, bool mouseLeftPressedLastFrame) {
     this->isHovered = this->shape.getGlobalBounds().contains(mousePos);
   
 
@@ -65,25 +60,22 @@ void Button::update(Vector2f& mousePos, bool mouseLeftPressedLastFrame)
         }
     }
     else {
-        shape.setFillColor(Color::Black);
+        shape.setFillColor(Color::Transparent);
     }
 
 	this->prevFramePressed = mouseLeftPressedLastFrame;
 }
 
-void Button::render(sf::RenderTarget* target)
-{
+void Button::render(sf::RenderTarget* target) {
 	target->draw(shape);
 	target->draw(text);
 }
 
-bool Button::isClicked() const
-{
+bool Button::isClicked() const {
     return  isHovered && !prevFramePressed && sf::Mouse::isButtonPressed(sf::Mouse::Left); 
 }
 
 
-string Button::getText() const
-{
+string Button::getText() const {
 	return this->text.getString().toAnsiString();//Ma zostac toANsi bo sie zjebie inaczej
 }

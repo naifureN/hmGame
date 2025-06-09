@@ -25,7 +25,6 @@ private:
 	Font font;
 	Text endGameText;
 	Text startText;
-	/*RestartButton* restartButton;*/
 	float shootDelay;
 	bool runningbool = true;
 	bool mouseLeftPressedLastFrame;

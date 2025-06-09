@@ -6,7 +6,6 @@ using namespace std;
 void Game::initWindow() {
 	this->window.create(sf::VideoMode(1280, 720), "Horda Kurwiu", Style::Titlebar | Style::Close);
 	this->window.setFramerateLimit(60);
-
 }
 
 void Game::initVars() {
@@ -205,45 +204,19 @@ void Game::updateButtons()
 
 void Game::update() {
 	this->pollEvents();
-	if (this->startGame==true) {             
-		updateButtons();          
-		return;                   
+	if (this->startGame==true) {
+		updateButtons();
+		return;
 	}
 
 	if (this->getEndGame() == false) {
 		this->player.update(&this->window);
 		updateBullets();
-		this->spawner.updateEnemies(player.getPos());
-	}
-	if (this->getEndGame()) {
-		updateButtons();
-	}
-
-	
-	
-}
-
-void Game::renderButtons()
-{
-	for (auto& button : buttons) {
-		button->render(&window);
-	}
-
-}
-
-	this->player.update(&this->window);
-	if (checkCollisionWithObstacles(player.getPlayerBounds())) {
-		std::cout << "Collision" << std::endl;
-		player.PushBack();
-	}
-	
-	
-	updateBullets();
-	this->spawner.updateEnemies(player.getPos(), player.getSprite(), player);
-	this->spawner.spawn();
-	if (this->spawner.isWaveCleared()) {
-		this->spawner.startNextWave();
-	}
+		this->spawner.updateEnemies(player.getPos(), player.getSprite(), player);
+		this->spawner.spawn();
+		if (this->spawner.isWaveCleared()) {
+			this->spawner.startNextWave();
+		}
 		for (auto& enemy : spawner.getEnemies()) {
 			if (checkCollisionWithObstacles(enemy->getBounds())) {
 				Vector2f dir = enemy->getEnemyPosition() - player.getPos();
@@ -265,7 +238,29 @@ void Game::renderButtons()
 			}
 		}
 		this->Enemyshoot();
+	}
+	if (this->getEndGame()) {
+		updateButtons();
+	}
+
+	if (checkCollisionWithObstacles(player.getPlayerBounds())) {
+		std::cout << "Collision" << std::endl;
+		player.PushBack();
+	}
+
+	
 }
+	
+
+void Game::renderButtons()
+{
+	for (auto& button : buttons) {
+		button->render(&window);
+	}
+
+}
+
+	
 
 void Game::Enemyshoot() {
 	for (auto& enemy : spawner.getEnemies()) {
@@ -291,37 +286,35 @@ void Game::Enemyshoot() {
 
 void Game::render() {
 	this->window.clear();
-  if (this->startGame){
+	if (this->startGame) {
 		renderButtons();        // START / EXIT
-		window.draw(this->startText); 
+		window.draw(this->startText);
 	}
-	else
-	{
-	this->window.draw(this->backgroundSprite);
-	for (size_t i = 0; i < obstacles.size();++i) {
-		window.draw(*obstacles[i]);
-	}
-	this->player.render(&this->window);
-	this->spawner.renderEnemies(&this->window);
-	for (auto& enemy : spawner.getEnemies()) {
-		if (auto rangedEnemy = dynamic_cast<RangeEnemy*>(enemy.get())) {
-			rangedEnemy->renderBullets(&this->window);
+	else {
+		this->window.draw(this->backgroundSprite);
+		for (size_t i = 0; i < obstacles.size(); ++i) {
+			window.draw(*obstacles[i]);
 		}
+		this->player.render(&this->window);
+		this->spawner.renderEnemies(&this->window);
+		for (auto& enemy : spawner.getEnemies()) {
+			if (auto rangedEnemy = dynamic_cast<RangeEnemy*>(enemy.get())) {
+				rangedEnemy->renderBullets(&this->window);
+			}
+		}
+		for (auto& b : bullets) b->render(&window);
+		this->player.renderHpBar(&this->window);
+		
 	}
-	for (auto& b : bullets) b->render(&window);
-	this->player.renderHpBar(&this->window);
-	this->window.display();
-  }
-if (this->endGame==true)
-		{
-			sf::RectangleShape overlay(sf::Vector2f(window.getSize()));
-			overlay.setFillColor(sf::Color(0, 0, 0, 150));
-			window.draw(overlay);
+	if (this->endGame==true){
+		sf::RectangleShape overlay(sf::Vector2f(window.getSize()));
+		overlay.setFillColor(sf::Color(0, 0, 0, 150));
+		window.draw(overlay);
 
-			window.draw(endGameText);
-			renderButtons();    // RESTART / EXIT
-		}
+		window.draw(endGameText);
+		renderButtons();    // RESTART / EXIT
 	}
+	this->window.display();
 }
 
 bool Game::checkCollisionWithObstacles(const sf::FloatRect& bounds) const {
