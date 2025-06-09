@@ -5,7 +5,7 @@ using namespace sf;
 class Spawner {
 	Texture EnemyTexture = Texture();
 	std::vector<std::unique_ptr<Enemy>> enemies;
-	int waveNumber = 6;
+	int waveNumber = 0;
 	int enemiesToSpawn = 0;
 	int enemiesSpawned = 0;
 	int killedThisTurn = 0;

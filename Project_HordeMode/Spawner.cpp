@@ -7,7 +7,10 @@ Spawner::~Spawner(){}
 
 void Spawner::startNextWave() {
     waveNumber++;
-    int r = rand() % (waveNumber/2);
+    int r = 0;
+    if (waveNumber > 1) {
+        r = rand() % (waveNumber / 2);
+    }
     enemiesToSpawn = 3 + waveNumber + r;
     enemiesSpawned = 0;
     killedThisTurn = 0;
