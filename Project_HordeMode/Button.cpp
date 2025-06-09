@@ -46,7 +46,7 @@ void Button::setText(const string& buttonText) {
 	text.setPosition(shape.getPosition());   
 }
 
-
+//komentarz do pusha
 
 void Button::update(Vector2f& mousePos, bool mouseLeftPressedLastFrame) {
     this->isHovered = this->shape.getGlobalBounds().contains(mousePos);
