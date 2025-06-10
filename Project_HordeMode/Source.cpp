@@ -11,6 +11,7 @@ void Game::initWindow() {
 void Game::initVars() {
 	this->startGame = true;
 	this->endGame = false;
+	this->showControls = false;
 	this->shootDelay = 0.001f;
 	this->bulletTexture.loadFromFile("gfx/bullet.png");
 	this->mouseLeftPressedLastFrame = false;
@@ -46,6 +47,17 @@ void Game::initText() {
 	FloatRect endBounds = endGameText.getLocalBounds();
 	this->endGameText.setOrigin(endBounds.left + endBounds.width / 2.f, endBounds.top + endBounds.height / 2.f);
 	this->endGameText.setPosition(1280.f / 2.f, 200.f);
+
+	// --- CONTROLS ---
+	this->controlsText.setFont(this->font);
+	this->controlsText.setCharacterSize(30);
+	this->controlsText.setFillColor(Color::Red);
+	this->controlsText.setString("W  - Move forward\nS - Move backwards\nA - Move left\nD - Move right\nLMB - Shoot\nK - Give up\nAim with your mouse");
+
+	//Srodkowanie controls
+	FloatRect controlBounds = endGameText.getLocalBounds();
+	this->controlsText.setOrigin(controlBounds.left + controlBounds.width / 2.f, controlBounds.top + controlBounds.height / 2.f);
+	this->controlsText.setPosition(1280.f / 2.f, 200.f);
 }
 
 
@@ -60,6 +72,7 @@ void Game::initButtons(bool startMode)
 		// START + EXIT
 		buttons.emplace_back(std::make_unique<Button>(centerX, menuY + 30.f, 0.f, 0.f, "START"));
 		buttons.emplace_back(std::make_unique<Button>(centerX, menuY + 130.f, 0.f, 0.f, "EXIT"));
+		buttons.emplace_back(std::make_unique<Button>(centerX, menuY + 170.f, 0.f, 0.f, "CONTROLS"));
 	}
 	else {
 		// RESTART + EXIT
@@ -171,39 +184,54 @@ void Game::updateButtons()
 	bool mouseLeftPressed = sf::Mouse::isButtonPressed(sf::Mouse::Left);
 
 	for (auto& button : buttons) {
-		
-		button->update(mousePos, this->mouseLeftPressedLastFrame);
+		button->update(mousePos, mouseLeftPressedLastFrame);
+	}
 
-		if (button->isClicked()) {
-			std::cout << "Kliknieto przycisk: " << button->getText() << std::endl;
-			if (button->getText() == "START") {
-				startGame = false;
-				initButtons(false);
-				return;
+	bool currentLeftPressed = sf::Mouse::isButtonPressed(sf::Mouse::Left);
+
+	if (!mouseLeftPressedLastFrame && currentLeftPressed) {
+		for (auto& button : buttons) {
+			if (button->isClicked()) {
+				std::cout << "Kliknieto przycisk: " << button->getText() << std::endl;
+				if (button->getText() == "START") {
+					startGame = false;
+					initButtons(false);
+					break;
+				}
+				else if (button->getText() == "EXIT") {
+					runningbool = false;
+					window.close();
+					break;
+				}
+				else if (button->getText() == "RESTART") {
+					resetGame();
+					break;
+				}
+				else if (button->getText() == "CONTROLS") {
+					this->showControls = true;
+					this->controlsClock.restart();
+
+					break;
+				}
 			}
-			else if (button->getText() == "EXIT") {
-				this->runningbool = false;
-				this->window.close();
-				return;
-			}
-			else if (button->getText() == "RESTART") {
-				resetGame();
-				return;
-			}
-		
 		}
 	}
 
-	
-	mouseLeftPressedLastFrame = mouseLeftPressed;
+	mouseLeftPressedLastFrame = currentLeftPressed;
 }
 
 
 
 void Game::update() {
 	this->pollEvents();
-	if (this->startGame==true) {
+	if (this->startGame == true) {
 		updateButtons();
+
+		// Znikanie tekstu "CONTROLS" po 5 sekundach
+		if (showControls && controlsClock.getElapsedTime().asSeconds() >= 5.f) {
+			showControls = false;
+		}
+
 		return;
 	}
 
@@ -286,6 +314,11 @@ void Game::render() {
 	if (this->startGame) {
 		renderButtons();        // START / EXIT
 		window.draw(this->startText);
+		if (this->showControls) {
+			cout << "COS" << endl;
+			window.draw(this->controlsText);
+		}
+
 	}
 	else {
 		this->window.draw(this->backgroundSprite);

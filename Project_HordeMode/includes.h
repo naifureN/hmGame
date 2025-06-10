@@ -12,5 +12,6 @@
 #include <cstdlib>
 #include <ctime>
 #include <random> 
+#include <windows.h>
 
 using namespace sf;
