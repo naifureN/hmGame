@@ -11,11 +11,14 @@ void Game::initWindow() {
 void Game::initVars() {
 	this->startGame = true;
 	this->endGame = false;
+	this->showControls = false;
 	this->shootDelay = 0.001f;
 	this->bulletTexture.loadFromFile("gfx/bullet.png");
 	this->mouseLeftPressedLastFrame = false;
 	this->backgroundTexture.loadFromFile("gfx/background.png");
 	this->backgroundSprite.setTexture(backgroundTexture);
+	this->controlsOverlay.setSize(Vector2f(1280.f, 720.f));
+	this->controlsOverlay.setFillColor(Color::Black);
 	std::srand(static_cast<unsigned>(std::time(nullptr)));
 	initObstacles();
 }
@@ -27,18 +30,18 @@ void Game::initFonts(){
 void Game::initText() {
 	// --- HORDE MODE ---
 	this->startText.setFont(this->font);
-	this->startText.setCharacterSize(60);
+	this->startText.setCharacterSize(80);
 	this->startText.setFillColor(Color::Red);
 	this->startText.setString("HORDE MODE");
 	
 	//Srodkowanie starttext
 	FloatRect bounds = startText.getLocalBounds();
 	startText.setOrigin(bounds.left + bounds.width / 2.f, bounds.top + bounds.height / 2.f);
-	startText.setPosition(1280.f / 2.f, 120.f);
+	startText.setPosition(1280.f / 2.f, 150.f);
 
 	// --- GAME OVER ---
 	this->endGameText.setFont(this->font);
-	this->endGameText.setCharacterSize(60);
+	this->endGameText.setCharacterSize(80);
 	this->endGameText.setFillColor(Color::Red);
 	this->endGameText.setString("GAME OVER");
 
@@ -46,6 +49,17 @@ void Game::initText() {
 	FloatRect endBounds = endGameText.getLocalBounds();
 	this->endGameText.setOrigin(endBounds.left + endBounds.width / 2.f, endBounds.top + endBounds.height / 2.f);
 	this->endGameText.setPosition(1280.f / 2.f, 200.f);
+
+	// --- CONTROLS ---
+	this->controlsText.setFont(this->font);
+	this->controlsText.setCharacterSize(40);
+	this->controlsText.setFillColor(Color::Red);
+	this->controlsText.setString("W - Move forward\nS - Move backwards\nA - Move left\nD - Move right\nLMB - Shoot\nK - Give up");
+
+	//Srodkowanie controls
+	FloatRect controlBounds = controlsText.getLocalBounds();
+	this->controlsText.setOrigin(controlBounds.left + controlBounds.width / 2.f, controlBounds.top + controlBounds.height / 2.f);
+	this->controlsText.setPosition(1280.f / 2.f, 250.f);
 }
 
 
@@ -56,10 +70,16 @@ void Game::initButtons(bool startMode)
 	float centerX = 1280.f / 2.f;
 	float menuY = 280.f;
 
-	if (startMode) {
+	
+	if (showControls) {
+		//X button for controls screen
+		buttons.emplace_back(std::make_unique<Button>(centerX, menuY + 260.f, 0.f, 0.f, "BACK TO MENU"));
+	}
+	else if (startMode) {
 		// START + EXIT
 		buttons.emplace_back(std::make_unique<Button>(centerX, menuY + 30.f, 0.f, 0.f, "START"));
-		buttons.emplace_back(std::make_unique<Button>(centerX, menuY + 130.f, 0.f, 0.f, "EXIT"));
+		buttons.emplace_back(std::make_unique<Button>(centerX, menuY + 200.f, 0.f, 0.f, "EXIT"));
+		buttons.emplace_back(std::make_unique<Button>(centerX, menuY + 120.f, 0.f, 0.f, "CONTROLS"));
 	}
 	else {
 		// RESTART + EXIT
@@ -171,39 +191,53 @@ void Game::updateButtons()
 	bool mouseLeftPressed = sf::Mouse::isButtonPressed(sf::Mouse::Left);
 
 	for (auto& button : buttons) {
-		
-		button->update(mousePos, this->mouseLeftPressedLastFrame);
+		button->update(mousePos, mouseLeftPressedLastFrame);
+	}
 
-		if (button->isClicked()) {
-			std::cout << "Kliknieto przycisk: " << button->getText() << std::endl;
-			if (button->getText() == "START") {
-				startGame = false;
-				initButtons(false);
-				return;
+	bool currentLeftPressed = sf::Mouse::isButtonPressed(sf::Mouse::Left);
+
+	if (!mouseLeftPressedLastFrame && currentLeftPressed) {
+		for (auto& button : buttons) {
+			if (button->isClicked()) {
+				std::cout << "Kliknieto przycisk: " << button->getText() << std::endl;
+				if (button->getText() == "START") {
+					startGame = false;
+					initButtons(false);
+					break;
+				}
+				else if (button->getText() == "EXIT") {
+					runningbool = false;
+					window.close();
+					break;
+				}
+				else if (button->getText() == "RESTART") {
+					resetGame();
+					break;
+				}
+				else if (button->getText() == "CONTROLS") {
+					this->showControls = true;
+					initButtons(false);
+					break;
+				}
+				else if (button->getText() == "BACK TO MENU") {
+					showControls = false;
+					initButtons(true);
+					break;
+				}
 			}
-			else if (button->getText() == "EXIT") {
-				this->runningbool = false;
-				this->window.close();
-				return;
-			}
-			else if (button->getText() == "RESTART") {
-				resetGame();
-				return;
-			}
-		
 		}
 	}
 
-	
-	mouseLeftPressedLastFrame = mouseLeftPressed;
+	mouseLeftPressedLastFrame = currentLeftPressed;
 }
 
 
 
 void Game::update() {
 	this->pollEvents();
-	if (this->startGame==true) {
+	if (this->startGame == true) {
 		updateButtons();
+
 		return;
 	}
 
@@ -284,9 +318,16 @@ void Game::Enemyshoot() {
 void Game::render() {
 	this->window.clear();
 	if (this->startGame) {
-		renderButtons();        // START / EXIT
 		window.draw(this->startText);
+
+		if (this->showControls) {
+			window.draw(controlsOverlay);
+			window.draw(this->controlsText);
+		}
+
+		renderButtons();  
 	}
+
 	else {
 		this->window.draw(this->backgroundSprite);
 		for (size_t i = 0; i < obstacles.size(); ++i) {
