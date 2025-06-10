@@ -103,3 +103,7 @@ bool Spawner::isWaveCleared() const {
 void Spawner::addKilled() {
     killedThisTurn++;
 }
+
+void Spawner::setWaveNumber(int x) {
+    waveNumber = x;
+}

@@ -35,7 +35,9 @@ public:
 	void renderHpBar(sf::RenderTarget* target);
 	void takeDamage(int damage);
 	const Sprite& getSprite() const;
-
+	void setHp(int x);
+	int getHp() const;
+	void setMaxHp(int x);
 	FloatRect getPlayerBounds() const;
 	float getSpeed() const;
 	Vector2f getDirection() const;

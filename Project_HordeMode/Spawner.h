@@ -29,5 +29,6 @@ public:
 	void initWaveBar();
 	void updateWaveBar();
 	void addKilled();
+	void setWaveNumber(int x);
 };
 

@@ -98,6 +98,9 @@ void Game::resetGame() {
 	/*playersetPosition(Vector2f(640, 600));  */
 	obstacles.clear();
 	initObstacles();
+	player.setMaxHp(100);
+	player.setHp(100);
+	spawner.setWaveNumber(0);
 
 }
 
@@ -235,6 +238,7 @@ void Game::updateButtons()
 
 void Game::update() {
 	this->pollEvents();
+	this->isPlayerDead();
 	if (this->startGame == true) {
 		updateButtons();
 
@@ -312,6 +316,12 @@ void Game::Enemyshoot() {
 				}
 			}
 		}
+	}
+}
+
+void Game::isPlayerDead() {
+	if (player.getHp() == 0) {
+		endGame = true;
 	}
 }
 
