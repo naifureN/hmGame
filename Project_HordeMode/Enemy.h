@@ -4,7 +4,6 @@
 #include"Bullet.h"
 using namespace sf;
 class Enemy {
-	Sprite sprite;
 	float movespeed;
 
 	int hp;
@@ -17,6 +16,7 @@ class Enemy {
 	float attackSpeed;
 	Clock attackTimer;
 protected:
+	Sprite sprite;
 	bool inverted = false;
 	bool AngleDir;
 
@@ -42,6 +42,7 @@ public:
 	virtual void moveEnemy(Vector2f playerpos) = 0;
 	virtual void initVars() = 0;
 	virtual void collided(Player& player) = 0;
+	virtual void renderEffect(RenderTarget* target) = 0;
 
 	//gettery i settery
 	void setHP(int x);
@@ -58,19 +59,29 @@ public:
 };
 
 class StandardEnemy : public Enemy {
+	Texture slashTexture;
+	Sprite slashSprite;
+	Clock effectTimer;
+	bool showEffect = false;
 public:
 	StandardEnemy(Texture* tex);
 	void initVars();
 	void moveEnemy(Vector2f playerpos);
 	void collided(Player& player);
+	void renderEffect(RenderTarget* target);
 };
 
 class TankEnemy : public Enemy {
+	Texture slashTexture;
+	Sprite slashSprite;
+	Clock effectTimer;
+	bool showEffect = false;
 public:
 	TankEnemy(Texture* tex);
 	void initVars();
 	void moveEnemy(Vector2f playerpos);
 	void collided(Player& player);
+	void renderEffect(RenderTarget* target);
 };
 
 class RangeEnemy : public Enemy {
@@ -93,5 +104,6 @@ public:
 	void setshootCooldown(float x);
 
 	std::vector<Bullet>& getBullets();
+	void renderEffect(RenderTarget* target);
 };
 

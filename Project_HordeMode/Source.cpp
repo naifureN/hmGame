@@ -102,6 +102,7 @@ void Game::resetGame() {
 	player.setHp(100);
 	spawner.setWaveNumber(0);
 
+
 }
 
 
