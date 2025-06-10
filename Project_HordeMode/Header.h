@@ -68,4 +68,6 @@ public:
 	bool isBulletOut(const Bullet& bullet) const;
 
 	void Enemyshoot();
+
+	void isPlayerDead();
 };

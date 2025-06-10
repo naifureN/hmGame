@@ -5,6 +5,7 @@ void Enemy::render(sf::RenderTarget* target) {
 	target->draw(this->sprite);
 	target->draw(this->hpBarBackground);
 	target->draw(this->hpBarFill);
+	renderEffect(target);
 }
 Enemy::Enemy(Texture* tex): hp(100), maxHp(100) {
 	this->sprite.setTexture(*tex);
@@ -173,6 +174,9 @@ void StandardEnemy::initVars() {
 
 StandardEnemy::StandardEnemy(Texture* tex) : Enemy(tex){
 	initVars();
+	slashTexture.loadFromFile("gfx/slash.png");
+	slashSprite.setTexture(slashTexture);
+	slashSprite.setOrigin(sprite.getLocalBounds().width/2, sprite.getLocalBounds().height/2);
 }
 
 void StandardEnemy::moveEnemy(Vector2f playerpos) {
@@ -214,6 +218,29 @@ void StandardEnemy::collided(Player& player) {
 	if (getAttackTime() > getAttackSpeed()) {
 		player.takeDamage(getDamage());
 		resetAttackTimer();
+
+		showEffect = true;
+		effectTimer.restart();
+		slashSprite.setPosition(getSpritePos());
+		if (inverted == true) {
+			slashSprite.setOrigin(sprite.getLocalBounds().width, 0.f);
+			slashSprite.setScale(-1.f, 1.f);
+		}
+		else if (inverted == false) {
+			slashSprite.setOrigin(0.f, 0.f);
+			slashSprite.setScale(1.f, 1.f);
+		}
+	}
+}
+
+void StandardEnemy::renderEffect(RenderTarget* target) {
+	if (showEffect) {
+		if (effectTimer.getElapsedTime().asSeconds() < 0.3f) {
+			target->draw(slashSprite);
+		}
+		else {
+			showEffect = false;
+		}
 	}
 }
 
@@ -232,6 +259,10 @@ void TankEnemy::initVars() {
 
 TankEnemy::TankEnemy(Texture* tex) : Enemy(tex) {
 	initVars();
+	slashTexture.loadFromFile("gfx/slash.png");
+	slashSprite.setTexture(slashTexture);
+	sf::Vector2u texSize = slashTexture.getSize();
+	slashSprite.setOrigin(texSize.x / 2.f, texSize.y / 2.f);
 }
 
 void TankEnemy::moveEnemy(Vector2f playerpos) {
@@ -273,6 +304,30 @@ void TankEnemy::collided(Player& player) {
 	if (getAttackTime() > getAttackSpeed()) {
 		player.takeDamage(getDamage());
 		resetAttackTimer();
+
+		showEffect = true;
+		effectTimer.restart();
+		slashSprite.setPosition(getSpritePos());
+
+		if (inverted == true) {
+			slashSprite.setOrigin(sprite.getLocalBounds().width, 0.f);
+			slashSprite.setScale(-1.f, 1.f);
+		}
+		else if (inverted == false) {
+			slashSprite.setOrigin(0.f, 0.f);
+			slashSprite.setScale(1.f, 1.f);
+		}
+	}
+}
+
+void TankEnemy::renderEffect(RenderTarget* target) {
+	if (showEffect) {
+		if (effectTimer.getElapsedTime().asSeconds() < 0.3f) {
+			target->draw(slashSprite);
+		}
+		else {
+			showEffect = false;
+		}
 	}
 }
 
@@ -378,3 +433,5 @@ std::vector<Bullet>& RangeEnemy::getBullets() {
 void RangeEnemy::setshootCooldown(float x) {
 	shootCooldown = x;
 }
+
+void RangeEnemy::renderEffect(RenderTarget* target) {}

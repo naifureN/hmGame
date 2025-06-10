@@ -175,6 +175,19 @@ const Sprite& Player::getSprite() const {
 	return shape;
 }
 
+void Player::setHp(int x) {
+	hp = x;
+}
+
+int Player::getHp() const
+{
+	return hp;
+}
+
+void Player::setMaxHp(int x) {
+	maxHp = x;
+}
+
 FloatRect Player::getPlayerBounds() const
 {
 	return shape.getGlobalBounds();
