@@ -17,6 +17,8 @@ void Game::initVars() {
 	this->mouseLeftPressedLastFrame = false;
 	this->backgroundTexture.loadFromFile("gfx/background.png");
 	this->backgroundSprite.setTexture(backgroundTexture);
+	this->controlsOverlay.setSize(Vector2f(1280.f, 720.f));
+	this->controlsOverlay.setFillColor(Color::Black);
 	std::srand(static_cast<unsigned>(std::time(nullptr)));
 	initObstacles();
 }
@@ -28,18 +30,18 @@ void Game::initFonts(){
 void Game::initText() {
 	// --- HORDE MODE ---
 	this->startText.setFont(this->font);
-	this->startText.setCharacterSize(60);
+	this->startText.setCharacterSize(80);
 	this->startText.setFillColor(Color::Red);
 	this->startText.setString("HORDE MODE");
 	
 	//Srodkowanie starttext
 	FloatRect bounds = startText.getLocalBounds();
 	startText.setOrigin(bounds.left + bounds.width / 2.f, bounds.top + bounds.height / 2.f);
-	startText.setPosition(1280.f / 2.f, 120.f);
+	startText.setPosition(1280.f / 2.f, 150.f);
 
 	// --- GAME OVER ---
 	this->endGameText.setFont(this->font);
-	this->endGameText.setCharacterSize(60);
+	this->endGameText.setCharacterSize(80);
 	this->endGameText.setFillColor(Color::Red);
 	this->endGameText.setString("GAME OVER");
 
@@ -50,14 +52,14 @@ void Game::initText() {
 
 	// --- CONTROLS ---
 	this->controlsText.setFont(this->font);
-	this->controlsText.setCharacterSize(30);
+	this->controlsText.setCharacterSize(40);
 	this->controlsText.setFillColor(Color::Red);
-	this->controlsText.setString("W  - Move forward\nS - Move backwards\nA - Move left\nD - Move right\nLMB - Shoot\nK - Give up\nAim with your mouse");
+	this->controlsText.setString("W - Move forward\nS - Move backwards\nA - Move left\nD - Move right\nLMB - Shoot\nK - Give up");
 
 	//Srodkowanie controls
-	FloatRect controlBounds = endGameText.getLocalBounds();
+	FloatRect controlBounds = controlsText.getLocalBounds();
 	this->controlsText.setOrigin(controlBounds.left + controlBounds.width / 2.f, controlBounds.top + controlBounds.height / 2.f);
-	this->controlsText.setPosition(1280.f / 2.f, 200.f);
+	this->controlsText.setPosition(1280.f / 2.f, 250.f);
 }
 
 
@@ -68,11 +70,16 @@ void Game::initButtons(bool startMode)
 	float centerX = 1280.f / 2.f;
 	float menuY = 280.f;
 
-	if (startMode) {
+	
+	if (showControls) {
+		//X button for controls screen
+		buttons.emplace_back(std::make_unique<Button>(centerX, menuY + 260.f, 0.f, 0.f, "BACK TO MENU"));
+	}
+	else if (startMode) {
 		// START + EXIT
 		buttons.emplace_back(std::make_unique<Button>(centerX, menuY + 30.f, 0.f, 0.f, "START"));
-		buttons.emplace_back(std::make_unique<Button>(centerX, menuY + 130.f, 0.f, 0.f, "EXIT"));
-		buttons.emplace_back(std::make_unique<Button>(centerX, menuY + 170.f, 0.f, 0.f, "CONTROLS"));
+		buttons.emplace_back(std::make_unique<Button>(centerX, menuY + 200.f, 0.f, 0.f, "EXIT"));
+		buttons.emplace_back(std::make_unique<Button>(centerX, menuY + 120.f, 0.f, 0.f, "CONTROLS"));
 	}
 	else {
 		// RESTART + EXIT
@@ -209,8 +216,12 @@ void Game::updateButtons()
 				}
 				else if (button->getText() == "CONTROLS") {
 					this->showControls = true;
-					this->controlsClock.restart();
-
+					initButtons(false);
+					break;
+				}
+				else if (button->getText() == "BACK TO MENU") {
+					showControls = false;
+					initButtons(true);
 					break;
 				}
 			}
@@ -226,11 +237,6 @@ void Game::update() {
 	this->pollEvents();
 	if (this->startGame == true) {
 		updateButtons();
-
-		// Znikanie tekstu "CONTROLS" po 5 sekundach
-		if (showControls && controlsClock.getElapsedTime().asSeconds() >= 5.f) {
-			showControls = false;
-		}
 
 		return;
 	}
@@ -312,14 +318,16 @@ void Game::Enemyshoot() {
 void Game::render() {
 	this->window.clear();
 	if (this->startGame) {
-		renderButtons();        // START / EXIT
 		window.draw(this->startText);
+
 		if (this->showControls) {
-			cout << "COS" << endl;
+			window.draw(controlsOverlay);
 			window.draw(this->controlsText);
 		}
 
+		renderButtons();  
 	}
+
 	else {
 		this->window.draw(this->backgroundSprite);
 		for (size_t i = 0; i < obstacles.size(); ++i) {

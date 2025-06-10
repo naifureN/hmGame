@@ -22,11 +22,11 @@ private:
 	Player player;
 	Spawner spawner;
 	Clock shootClock;
-	Clock controlsClock;
 	Font font;
 	Text endGameText;
 	Text startText;
 	Text controlsText;
+	RectangleShape controlsOverlay;
 	float shootDelay;
 	bool runningbool = true;
 	bool mouseLeftPressedLastFrame;
