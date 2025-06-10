@@ -17,7 +17,7 @@ class Enemy {
 	float attackSpeed;
 	Clock attackTimer;
 protected:
-
+	bool inverted = false;
 	bool AngleDir;
 
 public:

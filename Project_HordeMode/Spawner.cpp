@@ -4,7 +4,9 @@ Font Spawner::font;
 
 Spawner::Spawner() {
     font.loadFromFile("gfx/Symtext.ttf");
-	EnemyTexture.loadFromFile("gfx/enemy.png");
+	EnemyTexture.loadFromFile("gfx/tank.png");
+    StandardTexture.loadFromFile("gfx/standard.png");
+    RangeTexture.loadFromFile("gfx/range.png");
     initWaveBar();
 }
 Spawner::~Spawner(){}
@@ -62,10 +64,10 @@ void Spawner::spawn() {
         int type = rand() % numTypes;
         switch (type) {
         case 0:
-            enemies.emplace_back(std::make_unique<StandardEnemy>(&EnemyTexture));
+            enemies.emplace_back(std::make_unique<StandardEnemy>(&StandardTexture));
             break;
         case 1:
-            enemies.emplace_back(std::make_unique<RangeEnemy>(&EnemyTexture));
+            enemies.emplace_back(std::make_unique<RangeEnemy>(&RangeTexture));
             break;
         case 2:
             enemies.emplace_back(std::make_unique<TankEnemy>(&EnemyTexture));

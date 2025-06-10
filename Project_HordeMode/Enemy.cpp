@@ -1,7 +1,5 @@
 #include "Enemy.h"
 using namespace sf;
-//japko
-
 
 void Enemy::render(sf::RenderTarget* target) {
 	target->draw(this->sprite);
@@ -83,6 +81,15 @@ void Enemy::updateHpBar() {
 }
 
 void Enemy::update(Vector2f playerpos, Sprite playerSprite, Player& player) {
+	if (inverted == true) {
+		sprite.setOrigin(sprite.getLocalBounds().width, 0.f);
+		sprite.setScale(-1.f, 1.f);
+	}
+	else if (inverted == false) {
+		sprite.setOrigin(0.f, 0.f);
+		sprite.setScale(1.f, 1.f);
+	}
+
 	if (checkCollision(playerSprite)) {
 		collided(player);
 	}
@@ -190,7 +197,12 @@ void StandardEnemy::moveEnemy(Vector2f playerpos) {
 	}
 	
 	direction += directionNoise;
-
+	if (direction.x > 0) {
+		inverted = true;
+	}
+	else if (direction.x < 0) {
+		inverted = false;
+	}
 	float dirLen = std::sqrt(direction.x * direction.x + direction.y * direction.y);
 	if (dirLen > 0.0f) {
 		direction /= dirLen;
@@ -220,7 +232,6 @@ void TankEnemy::initVars() {
 
 TankEnemy::TankEnemy(Texture* tex) : Enemy(tex) {
 	initVars();
-	setSpriteColor(Color::Red);
 }
 
 void TankEnemy::moveEnemy(Vector2f playerpos) {
@@ -245,7 +256,12 @@ void TankEnemy::moveEnemy(Vector2f playerpos) {
 	}
 
 	direction += directionNoise;
-
+	if (direction.x > 0) {
+		inverted = true;
+	}
+	else if (direction.x < 0) {
+		inverted = false;
+	}
 	float dirLen = std::sqrt(direction.x * direction.x + direction.y * direction.y);
 	if (dirLen > 0.0f) {
 		direction = direction / dirLen;
@@ -278,7 +294,6 @@ void RangeEnemy::initVars() {
 
 RangeEnemy::RangeEnemy(Texture* tex) : Enemy(tex) {
 	initVars();
-	setSpriteColor(Color::Yellow);
 	initBulletTexture(&bulletTexture);
 }
 
@@ -303,6 +318,12 @@ void RangeEnemy::moveEnemy(Vector2f playerpos) {
 	directionRand.y += dist(gen);
 	}
 
+	if (direction.x > 0) {
+		inverted = true;
+	}
+	else if (direction.x < 0) {
+		inverted = false;
+	}
 	float dirLen = std::sqrt(direction.x * direction.x + direction.y * direction.y);
 	if (dirLen > 0.0f) {
 		 direction /= dirLen;

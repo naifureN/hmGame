@@ -89,13 +89,28 @@ void Player::updateWindowBoundsCollision(sf::RenderTarget* target) {
 
 }
 
-void Player::update(sf::RenderTarget* target) {
+void Player::update(sf::RenderTarget* target, Vector2i mousepos) {
+	float looking_at = mousepos.x - getSprite().getPosition().x;
+	if (looking_at > 0) {
+		inverted = true;
+	}
+	else if (looking_at < 0) {
+		inverted = false;
+	}
 	this->updateInput();
 	this->updateWindowBoundsCollision(target);
 	this->updateHpbar();
 }
 
 void Player::render(sf::RenderTarget* target) {
+	if (inverted == true) {
+		shape.setOrigin(shape.getLocalBounds().width, 0.f);
+		shape.setScale(-1.f, 1.f);
+	}
+	else if (inverted == false) {
+		shape.setOrigin(0.f, 0.f);
+		shape.setScale(1.f, 1.f);
+	}
 	target->draw(this->shape);
 }
 
