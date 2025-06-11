@@ -95,7 +95,7 @@ void Game::resetGame() {
 	endGame = false;
 	bullets.clear();
 	spawner.getEnemies().clear();      
-	/*playersetPosition(Vector2f(640, 600));  */
+	player.setPos(Vector2f(640, 360));
 	obstacles.clear();
 	initObstacles();
 	player.setMaxHp(100);

@@ -41,6 +41,10 @@ Player::~Player() {
 
 }
 
+void Player::setPos(Vector2f pos) {
+	shape.setPosition(pos);
+}
+
 void Player::updateInput() {
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::A) and not (sf::Keyboard::isKeyPressed(sf::Keyboard::D))) {
 		this->direction.x = -1.f;

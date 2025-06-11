@@ -26,6 +26,8 @@ public:
 	Player(float x = 640.f, float y = 320.f);
 	~Player();
 
+	void setPos(Vector2f pos);
+
 	void updateInput();
 	void updateWindowBoundsCollision(sf::RenderTarget* target);
 	void update(sf::RenderTarget* target, Vector2i mousepos);
