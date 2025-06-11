@@ -17,6 +17,7 @@ void Game::initVars() {
 	this->mouseLeftPressedLastFrame = false;
 	this->backgroundTexture.loadFromFile("gfx/background.png");
 	this->backgroundSprite.setTexture(backgroundTexture);
+	this->potionTexture.loadFromFile("gfx/healPot.png");
 	this->controlsOverlay.setSize(Vector2f(1280.f, 720.f));
 	this->controlsOverlay.setFillColor(Color::Black);
 	std::srand(static_cast<unsigned>(std::time(nullptr)));
@@ -275,6 +276,7 @@ void Game::update() {
 			}
 		}
 		this->Enemyshoot();
+		this->updatePotions();
 	}
 	if (this->getEndGame()) {
 		updateButtons();
@@ -353,6 +355,8 @@ void Game::render() {
 		}
 		for (auto& b : bullets) b->render(&window);
 		this->player.renderHpBar(&this->window);
+
+		for (auto& p : potions) this->window.draw(*p);
 		
 	}
 	if (this->endGame==true){
@@ -423,6 +427,10 @@ void Game::updateBullets() {
 				bulletHit = true;
 
 				if (enemies[j]->isDead()) {
+					int r = rand() % 100;
+					if (r < 10) {
+						createPotion(enemies[j]->getEnemyPosition());
+					}
 					enemies.erase(enemies.begin() + j);
 					spawner.addKilled();
 					continue;
@@ -440,6 +448,24 @@ void Game::updateBullets() {
 	}
 }
 
+void Game::updatePotions() {
+	const Sprite& playerSprite = player.getSprite();
+	for (size_t i = 0; i < potions.size(); ) {
+		if (potions[i]->getGlobalBounds().intersects(playerSprite.getGlobalBounds())) {
+			player.setHp(player.getHp() + 10);
+			potions.erase(potions.begin() + i);
+		}
+		else {
+			++i;
+		}
+	}
+}
+
+void Game::createPotion(Vector2f position) {
+	potions.emplace_back(std::make_unique<Sprite>());
+	potions.back()->setTexture(potionTexture);
+	potions.back()->setPosition(position);
+}
 
 bool Game::isBulletOut(const Bullet& bullet) const {
 	auto bounds = bullet.getGlobalBounds();
