@@ -12,7 +12,8 @@ void Game::initVars() {
 	this->startGame = true;
 	this->endGame = false;
 	this->showControls = false;
-	this->shootDelay = 0.001f;
+	//HI_______------------------------------------------------
+	this->shootDelay = 3.f;
 	this->bulletTexture.loadFromFile("gfx/bullet.png");
 	this->mouseLeftPressedLastFrame = false;
 	this->backgroundTexture.loadFromFile("gfx/background.png");
@@ -20,6 +21,10 @@ void Game::initVars() {
 	this->potionTexture.loadFromFile("gfx/healPot.png");
 	this->controlsOverlay.setSize(Vector2f(1280.f, 720.f));
 	this->controlsOverlay.setFillColor(Color::Black);
+	this->inUpgrade = false;
+	this->upgradeOverlay.setSize(Vector2f(1280.f, 720.f));
+	this->upgradeOverlay.setFillColor(Color(0, 0, 0, 200));
+
 	std::srand(static_cast<unsigned>(std::time(nullptr)));
 	initObstacles();
 }
@@ -89,6 +94,19 @@ void Game::initButtons(bool startMode)
 	}
 }
 
+void Game::initUpgradeButtons() {
+	upgradeButtons.clear();
+
+	float centerX = 1280.f / 2.f;
+	float startY = 300.f;
+	float spacing = 100.f;
+
+	upgradeButtons.emplace_back(std::make_unique<Button>(centerX, startY, 0.f, 0.f, "MORE HP"));
+	upgradeButtons.emplace_back(std::make_unique<Button>(centerX, startY + spacing, 0.f, 0.f, "FASTER BULLETS"));
+	upgradeButtons.emplace_back(std::make_unique<Button>(centerX, startY + 2 * spacing, 0.f, 0.f, "MORE DAMAGE"));
+}
+
+
 
 
 void Game::resetGame() {
@@ -148,7 +166,11 @@ void Game::pollEvents() {
 			if (this->evnt.key.code == sf::Keyboard::Escape) {
 				runningbool = false;
 				this->window.close();
-      }
+			}
+			if (this->evnt.key.code == Keyboard::L) {
+				this->inUpgrade = true;
+				initUpgradeButtons();
+			}
 			if (this->evnt.key.code == sf::Keyboard::G) {
 				this->endGame=true;
 			}
@@ -246,6 +268,11 @@ void Game::update() {
 
 		return;
 	}
+	if (inUpgrade) {
+		updateUpgradeButtons();
+		return; // przerywamy wszystko inne
+	}
+
 
 	if (this->getEndGame() == false) {
 		this->player.update(&this->window, Mouse::getPosition(window));
@@ -341,23 +368,32 @@ void Game::render() {
 		renderButtons();  
 	}
 
-	else {
-		this->window.draw(this->backgroundSprite);
-		for (size_t i = 0; i < obstacles.size(); ++i) {
-			window.draw(*obstacles[i]);
-		}
-		this->player.render(&this->window);
-		this->spawner.renderEnemies(&this->window);
-		for (auto& enemy : spawner.getEnemies()) {
-			if (auto rangedEnemy = dynamic_cast<RangeEnemy*>(enemy.get())) {
-				rangedEnemy->renderBullets(&this->window);
-			}
-		}
-		for (auto& b : bullets) b->render(&window);
-		this->player.renderHpBar(&this->window);
 
-		for (auto& p : potions) this->window.draw(*p);
-		
+	else {
+		if (inUpgrade) {
+			window.draw(upgradeOverlay);
+			for (auto& btn : upgradeButtons)
+				btn->render(&window);
+			window.display();
+			return; // przerywamy render reszty
+		}
+		else {
+			this->window.draw(this->backgroundSprite);
+			for (size_t i = 0; i < obstacles.size(); ++i) {
+				window.draw(*obstacles[i]);
+			}
+			this->player.render(&this->window);
+			this->spawner.renderEnemies(&this->window);
+			for (auto& enemy : spawner.getEnemies()) {
+				if (auto rangedEnemy = dynamic_cast<RangeEnemy*>(enemy.get())) {
+					rangedEnemy->renderBullets(&this->window);
+				}
+			}
+			for (auto& b : bullets) b->render(&window);
+			this->player.renderHpBar(&this->window);
+
+			for (auto& p : potions) this->window.draw(*p);
+		}
 	}
 	if (this->endGame==true){
 		sf::RectangleShape overlay(sf::Vector2f(window.getSize()));
@@ -460,6 +496,38 @@ void Game::updatePotions() {
 		}
 	}
 }
+
+void Game::updateUpgradeButtons() {
+	Vector2f mousePos = window.mapPixelToCoords(Mouse::getPosition(window));
+	bool mouseLeftPressed = sf::Mouse::isButtonPressed(sf::Mouse::Left);
+
+	for (auto& button : upgradeButtons)
+		button->update(mousePos, mouseLeftPressedLastFrame);
+
+	if (!mouseLeftPressedLastFrame && mouseLeftPressed) {
+		for (auto& button : upgradeButtons) {
+			if (button->isClicked()) {
+				std::string text = button->getText();
+
+				if (text == "MORE HP") {
+					player.setMaxHp(player.getMaxHp() + 20);
+				}
+				else if (text == "FASTER BULLETS") {
+					shootDelay = std::max(shootDelay - 0.1f, 0.05f);
+				}
+				else if (text == "MORE DAMAGE") {
+					cout<<"DZIALANIE UPGRADE MORE DAMAGE"; // zakładamy że coś takiego zrobisz
+				}
+
+				inUpgrade = false; // wyłącz upgrade
+				break;
+			}
+		}
+	}
+
+	mouseLeftPressedLastFrame = mouseLeftPressed;
+}
+
 
 void Game::createPotion(Vector2f position) {
 	potions.emplace_back(std::make_unique<Sprite>());
