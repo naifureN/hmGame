@@ -98,10 +98,12 @@ void Game::resetGame() {
 	spawner.getEnemies().clear();      
 	player.setPos(Vector2f(640, 360));
 	obstacles.clear();
+	potions.clear();
 	initObstacles();
 	player.setMaxHp(100);
 	player.setHp(100);
 	spawner.setWaveNumber(0);
+	spawner.startNextWave();
 
 
 }
