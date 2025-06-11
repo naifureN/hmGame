@@ -451,8 +451,8 @@ void Game::updateBullets() {
 void Game::updatePotions() {
 	const Sprite& playerSprite = player.getSprite();
 	for (size_t i = 0; i < potions.size(); ) {
-		if (potions[i]->getGlobalBounds().intersects(playerSprite.getGlobalBounds())) {
-			player.setHp(player.getHp() + 10);
+		if (potions[i]->getGlobalBounds().intersects(playerSprite.getGlobalBounds()) and player.getHp() < player.getMaxHp()) {
+			player.setHp(min(player.getHp() + 10, player.getMaxHp()));
 			potions.erase(potions.begin() + i);
 		}
 		else {

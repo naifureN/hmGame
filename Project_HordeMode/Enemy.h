@@ -19,9 +19,10 @@ protected:
 	Sprite sprite;
 	bool inverted = false;
 	bool AngleDir;
+	float modifier = 1.f;
 
 public:
-	Enemy(Texture* tex);
+	Enemy(Texture* tex, float m);
 	virtual ~Enemy(); //nie przesuwaæ do virtualek bo coœ siê zjebie
 
 	Clock noiseTimer;
@@ -37,6 +38,8 @@ public:
 	void resetAttackTimer();
 	void EnemyPushBack(const Vector2f& pushVec);
 	const Vector2f& getEnemyPosition() const;
+	void updateModifier();
+
 
 	// virtualki
 	virtual void moveEnemy(Vector2f playerpos) = 0;
@@ -56,6 +59,8 @@ public:
 	float getAttackTime();
 	void setDamage(int x);
 	int getDamage() const;
+	void setModifier(float x);
+	float getModifier();
 };
 
 class StandardEnemy : public Enemy {
@@ -64,7 +69,7 @@ class StandardEnemy : public Enemy {
 	Clock effectTimer;
 	bool showEffect = false;
 public:
-	StandardEnemy(Texture* tex);
+	StandardEnemy(Texture* tex, float m);
 	void initVars();
 	void moveEnemy(Vector2f playerpos);
 	void collided(Player& player);
@@ -77,7 +82,7 @@ class TankEnemy : public Enemy {
 	Clock effectTimer;
 	bool showEffect = false;
 public:
-	TankEnemy(Texture* tex);
+	TankEnemy(Texture* tex, float m);
 	void initVars();
 	void moveEnemy(Vector2f playerpos);
 	void collided(Player& player);
@@ -93,7 +98,7 @@ class RangeEnemy : public Enemy {
 
 	void initBulletTexture(Texture* tex);
 public:
-	RangeEnemy(Texture* tex);
+	RangeEnemy(Texture* tex, float m);
 	void initVars();
 	void moveEnemy(Vector2f playerpos);
 	void collided(Player& player);
