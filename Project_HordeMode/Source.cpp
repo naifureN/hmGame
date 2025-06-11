@@ -55,7 +55,7 @@ void Game::initText() {
 	this->controlsText.setFont(this->font);
 	this->controlsText.setCharacterSize(40);
 	this->controlsText.setFillColor(Color::Red);
-	this->controlsText.setString("W - Move forward\nS - Move backwards\nA - Move left\nD - Move right\nLMB - Shoot\nK - Give up");
+	this->controlsText.setString("W - Move forward\nS - Move backwards\nA - Move left\nD - Move right\nLMB - Shoot\nG - Give up");
 
 	//Srodkowanie controls
 	FloatRect controlBounds = controlsText.getLocalBounds();
@@ -149,7 +149,7 @@ void Game::pollEvents() {
 				runningbool = false;
 				this->window.close();
       }
-			if (this->evnt.key.code == sf::Keyboard::K) {
+			if (this->evnt.key.code == sf::Keyboard::G) {
 				this->endGame=true;
 			}
 			break;
