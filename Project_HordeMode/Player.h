@@ -39,6 +39,7 @@ public:
 	const Sprite& getSprite() const;
 	void setHp(int x);
 	int getHp() const;
+	int getMaxHp() const;
 	void setMaxHp(int x);
 	FloatRect getPlayerBounds() const;
 	float getSpeed() const;

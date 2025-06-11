@@ -7,7 +7,7 @@ void Enemy::render(sf::RenderTarget* target) {
 	target->draw(this->hpBarFill);
 	renderEffect(target);
 }
-Enemy::Enemy(Texture* tex): hp(100), maxHp(100) {
+Enemy::Enemy(Texture* tex, float m): hp(100), maxHp(100), modifier(m) {
 	this->sprite.setTexture(*tex);
 	int dir = rand() % 4;
 	int rx, ry;
@@ -159,11 +159,19 @@ const Vector2f& Enemy::getEnemyPosition() const{
 	return sprite.getPosition();
 }
 
+void Enemy::setModifier(float x) {
+	modifier = x;
+}
+
+float Enemy::getModifier() {
+	return modifier;
+}
+
 void StandardEnemy::initVars() {
-	setAttackSpeed(2.5f);
-	setHP(100);
-	setMovespeed(1.5f);
-	setDamage(10);
+	setAttackSpeed(2.5f / modifier);
+	setHP(int(float(100)*modifier));
+	setMovespeed(1.5f / modifier);
+	setDamage(int(float(10)*modifier));
 	if (rand() % 2 == 1) {
 		AngleDir = true;
 	}
@@ -172,7 +180,7 @@ void StandardEnemy::initVars() {
 	}
 }
 
-StandardEnemy::StandardEnemy(Texture* tex) : Enemy(tex){
+StandardEnemy::StandardEnemy(Texture* tex, float m) : Enemy(tex, m){
 	initVars();
 	slashTexture.loadFromFile("gfx/slash.png");
 	slashSprite.setTexture(slashTexture);
@@ -245,10 +253,10 @@ void StandardEnemy::renderEffect(RenderTarget* target) {
 }
 
 void TankEnemy::initVars() {
-	setAttackSpeed(4.0f);
-	setHP(200);
-	setMovespeed(1.f);
-	setDamage(30);
+	setAttackSpeed(4.0f / modifier);
+	setHP(int(float(200) * modifier));
+	setMovespeed(1.f / modifier);
+	setDamage(int(float(30) * modifier));
 	if (rand() % 2 == 1) {
 		AngleDir = true;
 	}
@@ -257,7 +265,7 @@ void TankEnemy::initVars() {
 	}
 }
 
-TankEnemy::TankEnemy(Texture* tex) : Enemy(tex) {
+TankEnemy::TankEnemy(Texture* tex, float m) : Enemy(tex, m) {
 	initVars();
 	slashTexture.loadFromFile("gfx/slash.png");
 	slashSprite.setTexture(slashTexture);
@@ -332,13 +340,13 @@ void TankEnemy::renderEffect(RenderTarget* target) {
 }
 
 void RangeEnemy::initVars() {
-	setAttackSpeed(2.0f);
-	setHP(75);
-	setMovespeed(2.75f);
+	setAttackSpeed(2.0f / modifier);
+	setHP(int(float(75) * modifier));
+	setMovespeed(2.75f / modifier);
 	int r = rand() % 26;
 	closest = 300.0f + r;
-	setDamage(5);
-	setshootCooldown(2.f);
+	setDamage(int(float(5) * modifier));
+	setshootCooldown(2.f / modifier);
 	if (rand() % 2 == 1) {
 		AngleDir = true;
 	}
@@ -347,7 +355,7 @@ void RangeEnemy::initVars() {
 	}
 }
 
-RangeEnemy::RangeEnemy(Texture* tex) : Enemy(tex) {
+RangeEnemy::RangeEnemy(Texture* tex, float m) : Enemy(tex, m) {
 	initVars();
 	initBulletTexture(&bulletTexture);
 }

@@ -12,10 +12,13 @@ private:
 	sf::RenderWindow window;
 	sf::Event evnt;
 	Texture backgroundTexture;
+	Texture potionTexture;
 	Sprite backgroundSprite;
+	Sprite potionSprite;
 	bool endGame;
 	bool startGame;
 	bool showControls;
+	std::vector<std::unique_ptr<Sprite>> potions;
 	std::vector<std::unique_ptr<Bullet>> bullets;
 	vector<std::unique_ptr<Button>> buttons;
 	Texture bulletTexture;
@@ -62,7 +65,8 @@ public:
 
 	bool checkRotatedCollision(const std::unique_ptr<sf::RectangleShape>& rect, const sf::FloatRect& bounds) const;
 
-
+	void updatePotions();
+	void createPotion(Vector2f position);
 	void shoot();
 	void updateBullets();
 	bool isBulletOut(const Bullet& bullet) const;

@@ -49,6 +49,9 @@ void Spawner::startNextWave() {
     killedThisTurn = 0;
     spawnInterval = std::max(0.2f, 1.5f - waveNumber * 0.1f);
     spawnClock.restart();
+    if (waveNumber % 3 == 0) {
+        modifier += 0.1f;
+    }
 }
 
 void Spawner::spawn() {
@@ -64,13 +67,13 @@ void Spawner::spawn() {
         int type = rand() % numTypes;
         switch (type) {
         case 0:
-            enemies.emplace_back(std::make_unique<StandardEnemy>(&StandardTexture));
+            enemies.emplace_back(std::make_unique<StandardEnemy>(&StandardTexture, this->modifier));
             break;
         case 1:
-            enemies.emplace_back(std::make_unique<RangeEnemy>(&RangeTexture));
+            enemies.emplace_back(std::make_unique<RangeEnemy>(&RangeTexture, this->modifier));
             break;
         case 2:
-            enemies.emplace_back(std::make_unique<TankEnemy>(&EnemyTexture));
+            enemies.emplace_back(std::make_unique<TankEnemy>(&EnemyTexture, this->modifier));
             break;
         }
         enemiesSpawned++;
@@ -80,8 +83,9 @@ void Spawner::spawn() {
 
 void Spawner::updateEnemies(Vector2f playerpos, Sprite playerSprite, Player& player) {
     updateWaveBar();
-    for (auto& e : enemies)
+    for (auto& e : enemies) {
         e->update(playerpos, playerSprite, player);
+    }
 }
 
 void Spawner::renderEnemies(RenderWindow* window) {

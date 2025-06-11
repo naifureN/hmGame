@@ -13,6 +13,7 @@ class Spawner {
 	int killedThisTurn = 0;
 	sf::Clock spawnClock = Clock();
 	float spawnInterval = 1.0f;
+	float modifier = 1.0f;
 	static Font font;
 	Text waveText;
 	RectangleShape waveBarBackground;

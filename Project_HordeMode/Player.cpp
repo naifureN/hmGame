@@ -183,9 +183,12 @@ void Player::setHp(int x) {
 	hp = x;
 }
 
-int Player::getHp() const
-{
+int Player::getHp() const {
 	return hp;
+}
+
+int Player::getMaxHp() const {
+	return maxHp;
 }
 
 void Player::setMaxHp(int x) {
