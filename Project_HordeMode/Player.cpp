@@ -2,18 +2,20 @@
 #include <iostream>
 Font Player::font;
 
+//ustawienie podstawowych wartosci zmiennych
 void Player::initVars() {
 	this->movespeed = 5.f;
 	this->direction = Vector2f(0, 0);
 }
 
+//stworzenie sprite'a gracza
 void Player::initShape() {
 	this->texture.loadFromFile("gfx/player.png");
 	this->shape.setTexture(this->texture);
 }
 
+//utworzenie i ustawienie podstawowych wartosci dla paska zycia gracza
 void Player::initHpBar() {
-
 	playerhpBarBackground.setSize(sf::Vector2f(200.f, 20.f));
 	playerhpBarBackground.setFillColor(sf::Color(50, 50, 50));
 	playerhpBarBackground.setOutlineThickness(2.f);
@@ -34,10 +36,10 @@ void Player::initHpBar() {
 
 	hpText.setFont(font);
 	hpText.setCharacterSize(18);
-	hpText.setString("Piwo");
+	hpText.setString("x/100");
 }
 
-
+//konstruktor gracza
 Player::Player(float x, float y) : hp(100), maxHp(100) {
 	this->shape.setPosition(640.f, 320.f);
 	this->initVars();
@@ -45,14 +47,14 @@ Player::Player(float x, float y) : hp(100), maxHp(100) {
 	this->initHpBar();
 }
 
-Player::~Player() {
+Player::~Player() {}
 
-}
-
+//ustawienie pozycji sprite'a gracza
 void Player::setPos(Vector2f pos) {
 	shape.setPosition(pos);
 }
 
+//ruch gracza na podstawie klawiszy
 void Player::updateInput() {
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::A) and not (sf::Keyboard::isKeyPressed(sf::Keyboard::D))) {
 		this->direction.x = -1.f;
@@ -78,6 +80,7 @@ void Player::updateInput() {
 	shape.setPosition(operator+(shape.getPosition(), operator*(this->direction, this->movespeed)));
 }
 
+//sprawia zeby gracz nie mogl wyjsc poza ekran
 void Player::updateWindowBoundsCollision(sf::RenderTarget* target) {
 
 	sf::FloatRect playerBounds = this->shape.getGlobalBounds();
@@ -101,6 +104,7 @@ void Player::updateWindowBoundsCollision(sf::RenderTarget* target) {
 
 }
 
+//aktualizacja gracza
 void Player::update(sf::RenderTarget* target, Vector2i mousepos) {
 	float looking_at = mousepos.x - getSprite().getPosition().x;
 	if (looking_at > 0) {
@@ -114,6 +118,7 @@ void Player::update(sf::RenderTarget* target, Vector2i mousepos) {
 	this->updateHpbar();
 }
 
+//rysowanie gracza na ekran
 void Player::render(sf::RenderTarget* target) {
 	if (inverted == true) {
 		shape.setOrigin(shape.getLocalBounds().width, 0.f);
@@ -126,6 +131,7 @@ void Player::render(sf::RenderTarget* target) {
 	target->draw(this->shape);
 }
 
+//zwraca wektor o tym samym kierunku ale o dlugosci 1
 Vector2f Player::normalize_vector(float vecx, float vecy) {
 	float len = sqrtf(vecx * vecx + vecy * vecy);
 	if (len > 0) {
@@ -135,10 +141,12 @@ Vector2f Player::normalize_vector(float vecx, float vecy) {
 	return Vector2f(vecx, vecy);
 }
 
+//zwraca pozycje sprite'a gracza
 const Vector2f& Player::getPos() const {
 	return shape.getPosition();
 }
 
+//aktualizuje pasek zdrowia gracza
 void Player::updateHpbar() {
 	float hpPercent = static_cast<float>(hp) / maxHp;
 	hpPercent = std::clamp(hpPercent, 0.f, 1.f);
@@ -158,8 +166,8 @@ void Player::updateHpbar() {
 	}
 }
 
+//rysuje pasek zdrowia gracza na ekran
 void Player::renderHpBar(sf::RenderTarget* target) {
-
 	sf::Vector2u windowSize = target->getSize();
 	float posX = windowSize.x - playerhpBarBackground.getSize().x - 20.f;
 	float posY = windowSize.y - playerhpBarBackground.getSize().y - 32.f;
@@ -177,51 +185,56 @@ void Player::renderHpBar(sf::RenderTarget* target) {
 	target->draw(this->hpText);
 }
 
+//zadaje obrazenia graczowi
 void Player::takeDamage(int damage) {
 	hp -= damage;
 	hp = std::max(0, hp); // Zabezpieczenie przed ujemnym HP
-	updateHpbar(); // Aktualizuj wyglÄ…d paska
+	updateHpbar(); // Aktualizuj wyglad paska
 }
 
+//zwraca pointer do sprite'a gracza
 const Sprite& Player::getSprite() const {
 	return shape;
 }
 
+//ustawia punkty zdrowia gracza
 void Player::setHp(int x) {
 	hp = x;
 }
 
+//zwraca obecne punkty zdrowia gracza
 int Player::getHp() const {
 	return hp;
 }
 
+//zwraca maksymalna ilosc punktow zdrowia gracza
 int Player::getMaxHp() const {
 	return maxHp;
 }
 
+//ustawia maksymalna ilosc punktow zdrowia gracza
 void Player::setMaxHp(int x) {
 	maxHp = x;
 }
 
-FloatRect Player::getPlayerBounds() const
-{
+//zwraca informacje o pozycji gracza
+FloatRect Player::getPlayerBounds() const {
 	return shape.getGlobalBounds();
 }
 
-float Player::getSpeed() const
-{
+//zwraca predkosc ruchu gracza
+float Player::getSpeed() const {
 	return movespeed;
 }
 
-Vector2f Player::getDirection() const
-{
+//zwraca kierunek ruchu gracza
+Vector2f Player::getDirection() const {
 	return direction;
 }
 
-void Player::PushBack()
-{
+//cofa gracza
+void Player::PushBack() {
 	sf::Vector2f pushBack = -direction* movespeed;
-
 	shape.move(pushBack);
 	
 }
