@@ -4,8 +4,13 @@ using namespace std;
 //Funs
 
 void Game::initWindow() {
+	
 	this->window.create(sf::VideoMode(1280, 720), "Czarodziej Bartjociechus", Style::Titlebar | Style::Close);
 	this->window.setFramerateLimit(60);
+	sf::Image icon;
+	if (icon.loadFromFile("gfx/player.png")) {
+		window.setIcon(icon.getSize().x, icon.getSize().y, icon.getPixelsPtr());
+	}
 }
 
 void Game::initVars() {
