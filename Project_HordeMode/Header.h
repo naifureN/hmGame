@@ -21,6 +21,8 @@ private:
 	std::vector<std::unique_ptr<Sprite>> potions;
 	std::vector<std::unique_ptr<Bullet>> bullets;
 	vector<std::unique_ptr<Button>> buttons;
+	sf::RectangleShape upgradeOverlay;
+	std::vector<std::unique_ptr<Button>> upgradeButtons;
 	Texture bulletTexture;
 	Player player;
 	Spawner spawner;
@@ -29,16 +31,15 @@ private:
 	Text endGameText;
 	Text startText;
 	Text controlsText;
+	Text upgradeText;
 	RectangleShape controlsOverlay;
 	float shootDelay;
 	bool runningbool = true;
 	bool mouseLeftPressedLastFrame;
 	float damageModifier = 1.f;
-	//TYMCZASOWE-----------------------------------------------
 	bool inUpgrade = false;
-	sf::RectangleShape upgradeOverlay;
-	std::vector<std::unique_ptr<Button>> upgradeButtons;
-	//TYMCZASOwe----------------------------------
+	
+	
 
 	void initWindow();
 	void initVars();

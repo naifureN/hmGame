@@ -14,10 +14,10 @@ void Game::initWindow() {
 }
 
 void Game::initVars() {
+	//inicjalizacja zmiennych, tekstur oraz overlaye
 	this->startGame = true;
 	this->endGame = false;
 	this->showControls = false;
-	//HI_______------------------------------------------------
 	this->shootDelay = 0.5f;
 	this->bulletTexture.loadFromFile("gfx/bullet.png");
 	this->mouseLeftPressedLastFrame = false;
@@ -80,6 +80,18 @@ void Game::initText() {
 	FloatRect controlBounds = controlsText.getLocalBounds();
 	this->controlsText.setOrigin(controlBounds.left + controlBounds.width / 2.f, controlBounds.top + controlBounds.height / 2.f);
 	this->controlsText.setPosition(1280.f / 2.f, 250.f);
+
+	// --- CHOOSE UPGRADE ---
+	this->upgradeText.setFont(this->font);
+	this->upgradeText.setCharacterSize(60);
+	this->upgradeText.setFillColor(Color::Red);
+	this->upgradeText.setString("CHOOSE YOUR UPGRADE");
+
+	//Srodkowanie upgradeText
+	FloatRect upgradeBounds = upgradeText.getLocalBounds();
+	this->upgradeText.setOrigin(upgradeBounds.left + upgradeBounds.width / 2.f, upgradeBounds.top + upgradeBounds.height / 2.f);
+	this->upgradeText.setPosition(1280.f / 2.f, 120.f);
+
 }
 
 
@@ -90,9 +102,10 @@ void Game::initButtons(bool startMode)
 	float centerX = 1280.f / 2.f;
 	float menuY = 280.f;
 
+	//TWORZENIE PRZYCISKOW DO MENU ITD
 	
 	if (showControls) {
-		//X button for controls screen
+		// BACK TO MENU
 		buttons.emplace_back(std::make_unique<Button>(centerX, menuY + 260.f, 0.f, 0.f, "BACK TO MENU"));
 	}
 	else if (startMode) {
@@ -111,6 +124,7 @@ void Game::initButtons(bool startMode)
 void Game::initUpgradeButtons() {
 	upgradeButtons.clear();
 
+	//TWORZENIE PRZYCISKOW Z UPGRADAMI
 	float centerX = 1280.f / 2.f;
 	float startY = 300.f;
 	float spacing = 100.f;
@@ -124,6 +138,7 @@ void Game::initUpgradeButtons() {
 
 
 void Game::resetGame() {
+	//USTAWIANIE WSZYSTKIEGO NA DOMYSLNA WARTOSC / USUWANIE WSZYSTKICH UTWORZONYCH OBIEKTOW
 	
 	endGame = false;
 	bullets.clear();
@@ -142,10 +157,12 @@ void Game::resetGame() {
 
 
 const bool Game::running() const {
+	//GETTER DO GLOWNEGO WARUNKU TRWANIA GRY
 	return this->runningbool;
 }
 
 void Game::initObstacles() {
+	//TWORZENIE PRZESZKOD
 	obstacles.clear();
 
 	std::srand(static_cast<unsigned>(std::time(nullptr)));
@@ -156,6 +173,8 @@ void Game::initObstacles() {
 
 		// Ustawienia przeszkody
 		obstacle->setSize(sf::Vector2f(40 + (std::rand() % 150),  30 + (std::rand() % 70)));
+
+		//LOSOWY ROZRZUT 
 		float xpos =  std::rand() % window.getSize().x;
 		float ypos =  std::rand() % window.getSize().y;
 
@@ -174,6 +193,7 @@ void Game::initObstacles() {
 
 
 void Game::pollEvents() {
+	//WYLAPYWANIE WYDARZEN MOUSE CLICK I KEYBOARD CLICK
 	while (this->window.pollEvent(this->evnt))
 	{
 		switch (this->evnt.type)
@@ -204,6 +224,7 @@ void Game::pollEvents() {
 
 const bool& Game::getEndGame() const
 {
+	//GETTER DO ENDGAME
 	return this->endGame;
 }
 
@@ -226,6 +247,9 @@ Game::~Game() {
 
 void Game::updateButtons()
 {
+	//WYKRYWANIE KLIKNIECIA
+	//ZABEZPIECZENIE PRZED PRZYTRZYMYWANIEM PRZYCISKU
+
 	Vector2f mousePos = window.mapPixelToCoords(Mouse::getPosition(window));
 	bool mouseLeftPressed = sf::Mouse::isButtonPressed(sf::Mouse::Left);
 
@@ -239,6 +263,8 @@ void Game::updateButtons()
 		for (auto& button : buttons) {
 			if (button->isClicked()) {
 				std::cout << "Kliknieto przycisk: " << button->getText() << std::endl;
+
+				// DZIALANIE KONKRETNYCH PRZYCISKOW
 				if (button->getText() == "START") {
 					startGame = false;
 					initButtons(false);
@@ -273,6 +299,8 @@ void Game::updateButtons()
 
 
 void Game::update() {
+	//UPDATE WSZYSTKIEGO PO KOLEI
+	//UPDATE ODPOWIEDNICH OBJEKTOW GDY SPELNIONY JEST ODPOWIEDNI WARUNEK
 	this->pollEvents();
 	this->isPlayerDead();
 	if (this->startGame == true) {
@@ -282,7 +310,7 @@ void Game::update() {
 	}
 	if (inUpgrade) {
 		updateUpgradeButtons();
-		return; // przerywamy wszystko inne
+		return; 
 	}
 
 
@@ -333,7 +361,10 @@ void Game::update() {
 }
 	
 
-void Game::renderButtons() {
+
+void Game::renderButtons()
+{
+	//WYSWIETLANIE NA EKRANIE PRZYCISKOW Z WEKTORA
 	for (auto& button : buttons) {
 		button->render(&window);
 	}
@@ -341,7 +372,7 @@ void Game::renderButtons() {
 }
 
 	
-
+/// Obsluga strzelania przeciwnikow
 void Game::Enemyshoot() {
 	for (auto& enemy : spawner.getEnemies()) {
 		enemy->update(player.getPos(), player.getSprite(), player);
@@ -365,14 +396,17 @@ void Game::Enemyshoot() {
 }
 
 void Game::isPlayerDead() {
+	//Sprawdzanie czy gracz umarl, wyswietlenie konca gry 
 	if (player.getHp() == 0) {
 		endGame = true;
 	}
 }
 
 void Game::render() {
+	//WYSWIETLANIE NA EKRANIE KONKRETNYCH OBJEKTOW WRAZ Z WARUNKAMI
 	this->window.clear();
 	if (this->startGame) {
+		//WYSWIETLANIE EKRANU POCZATKOWEGO
 		window.draw(this->startText);
 
 		if (this->showControls) {
@@ -387,12 +421,15 @@ void Game::render() {
 	else {
 		if (inUpgrade) {
 			window.draw(upgradeOverlay);
+			window.draw(this->upgradeText);
+			//wYSWIETLANIE UPGRADOW TYLKO GDY JEST TO POTRZEBNE
 			for (auto& btn : upgradeButtons)
 				btn->render(&window);
 			window.display();
-			return; // przerywamy render reszty
+			return; 
 		}
 		else {
+			//RYSOWANIE TLA, WROGOW POCISKOW I POTIONOW
 			this->window.draw(this->backgroundSprite);
 			for (size_t i = 0; i < obstacles.size(); ++i) {
 				window.draw(*obstacles[i]);
@@ -411,17 +448,19 @@ void Game::render() {
 		}
 	}
 	if (this->endGame==true){
+		//WYSWIETLANIE EKRANU KONCOWEGO
 		sf::RectangleShape overlay(sf::Vector2f(window.getSize()));
 		overlay.setFillColor(sf::Color(0, 0, 0, 150));
 		window.draw(overlay);
 
 		window.draw(endGameText);
-		renderButtons();    // RESTART / EXIT
+		renderButtons();    
 	}
 	this->window.display();
 }
 
 bool Game::checkCollisionWithObstacles(const sf::FloatRect& bounds) const {
+	//SPRAWDZANIE KOLIZJI Z PRZESZKODAMI
 	for (const auto& obstacle : obstacles) {
 		if (checkRotatedCollision(obstacle, bounds)) {
 			return true;
@@ -431,6 +470,7 @@ bool Game::checkCollisionWithObstacles(const sf::FloatRect& bounds) const {
 }
 
 bool Game::checkRotatedCollision(const std::unique_ptr<sf::RectangleShape>& rect, const sf::FloatRect& bounds) const {
+	//Sprawdzanie kolizji z obroconymi przeszkodami 
 	const sf::Transform& transform = rect->getTransform();
 	sf::Transform inverseTransform = transform.getInverse();
 
@@ -458,6 +498,7 @@ bool Game::checkRotatedCollision(const std::unique_ptr<sf::RectangleShape>& rect
 }
 
 void Game::shoot() {
+	//Tworzenie przyciskow lecacych w strone kursora, restart cooldownu do strzelania 
 	if (shootClock.getElapsedTime().asSeconds() >= shootDelay) {
 		Vector2i mousepos = Mouse::getPosition(window);
 		bullets.emplace_back(std::make_unique<Bullet>(bulletTexture, player.getPos(), Vector2f(mousepos), int(float(25)*damageModifier)));
@@ -466,6 +507,7 @@ void Game::shoot() {
 }
 
 void Game::updateBullets() {
+	//Aktualizacja pociskow
 	for (size_t i = 0; i < bullets.size();) {
 		bullets[i]->update();
 
@@ -500,6 +542,7 @@ void Game::updateBullets() {
 }
 
 void Game::updatePotions() {
+	//Aktualizacja potionow
 	const Sprite& playerSprite = player.getSprite();
 	for (size_t i = 0; i < potions.size(); ) {
 		if (potions[i]->getGlobalBounds().intersects(playerSprite.getGlobalBounds()) and player.getHp() < player.getMaxHp()) {
@@ -513,6 +556,7 @@ void Game::updatePotions() {
 }
 
 void Game::updateUpgradeButtons() {
+	//AKTUALIZOWANIE STANU PRZYCISKOW DO UPGRADOW
 	Vector2f mousePos = window.mapPixelToCoords(Mouse::getPosition(window));
 	bool mouseLeftPressed = sf::Mouse::isButtonPressed(sf::Mouse::Left);
 
@@ -523,7 +567,7 @@ void Game::updateUpgradeButtons() {
 		for (auto& button : upgradeButtons) {
 			if (button->isClicked()) {
 				std::string text = button->getText();
-
+				//DZIALANIE KONKRETNYCH ULEPSZEN
 				if (text == "MORE HP") {
 					player.setMaxHp(player.getMaxHp() + 20);
 				}
@@ -534,7 +578,7 @@ void Game::updateUpgradeButtons() {
 					damageModifier += 0.325f;
 				}
 
-				inUpgrade = false; // wyłącz upgrade
+				inUpgrade = false; 
 				break;
 			}
 		}
@@ -545,12 +589,14 @@ void Game::updateUpgradeButtons() {
 
 
 void Game::createPotion(Vector2f position) {
+	//TWORZENIE OBJEKTOW POTION
 	potions.emplace_back(std::make_unique<Sprite>());
 	potions.back()->setTexture(potionTexture);
 	potions.back()->setPosition(position);
 }
 
 bool Game::isBulletOut(const Bullet& bullet) const {
+	//SPRAWDZANIE CZY POCISK WYLECIAL POZA EKRAN
 	auto bounds = bullet.getGlobalBounds();
 	return (bounds.left + bounds.width<0 || bounds.left>window.getSize().x || bounds.top + bounds.height<0 || bounds.top>window.getSize().y);
 }
