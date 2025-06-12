@@ -23,7 +23,7 @@ protected:
 
 public:
 	Enemy(Texture* tex, float m);
-	virtual ~Enemy(); //nie przesuwaæ do virtualek bo coœ siê zjebie
+	virtual ~Enemy();
 
 	Clock noiseTimer;
 	Vector2f directionNoise;
@@ -38,7 +38,6 @@ public:
 	void resetAttackTimer();
 	void EnemyPushBack(const Vector2f& pushVec);
 	const Vector2f& getEnemyPosition() const;
-	void updateModifier();
 
 
 	// virtualki
@@ -54,7 +53,6 @@ public:
 	const FloatRect getBounds() const;
 	void setAttackSpeed(float x);
 	float getAttackSpeed();
-	void setSpriteColor(Color c);
 	Vector2f getSpritePos();
 	float getAttackTime();
 	void setDamage(int x);

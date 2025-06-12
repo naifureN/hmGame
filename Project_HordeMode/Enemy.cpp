@@ -1,12 +1,15 @@
 #include "Enemy.h"
 using namespace sf;
 
+//Renderowanie przeciwnikow
 void Enemy::render(sf::RenderTarget* target) {
 	target->draw(this->sprite);
 	target->draw(this->hpBarBackground);
 	target->draw(this->hpBarFill);
 	renderEffect(target);
 }
+
+//Tworzenie przeciwnika wraz z losowaniem z ktorej strony sie pojawi
 Enemy::Enemy(Texture* tex, float m): hp(100), maxHp(100), modifier(m) {
 	this->sprite.setTexture(*tex);
 	int dir = rand() % 4;
@@ -45,25 +48,29 @@ Enemy::Enemy(Texture* tex, float m): hp(100), maxHp(100), modifier(m) {
 
 	updateHpBar();
 }
+
 Enemy::~Enemy(){}
 
+//Zwraca czy przeciwnik zyje
 bool Enemy::isDead() const {
 	return hp <= 0;
 }
 
+//Funkcja zwracajaca polozenie sprite'a oraz jego rozmiar
 const FloatRect Enemy::getBounds() const {
 	return sprite.getGlobalBounds();
 }
 
+//Zadawanie obrazen przeciwnikowi
 void Enemy::takeDamage(int damage) {
 	hp -= damage;
 	if (hp < 0) {
 		hp=0;
 	}
-
 	updateHpBar();
 }
 
+//Aktualizacja paska zycia na podstawie obecnej ilosci punktow zycia
 void Enemy::updateHpBar() {
 	if (maxHp <= 0) {
 		return;
@@ -81,6 +88,7 @@ void Enemy::updateHpBar() {
 	}
 }
 
+//ruch Sprite'a przeciwnika
 void Enemy::update(Vector2f playerpos, Sprite playerSprite, Player& player) {
 	if (inverted == true) {
 		sprite.setOrigin(sprite.getLocalBounds().width, 0.f);
@@ -100,73 +108,90 @@ void Enemy::update(Vector2f playerpos, Sprite playerSprite, Player& player) {
 	hpBarBackground.setPosition(this->sprite.getPosition().x, this->sprite.getPosition().y-10);
 	hpBarFill.setPosition(this->sprite.getPosition().x, this->sprite.getPosition().y - 10);
 }
+
+//ustawia AttackSpeed przeciwnika
 void Enemy::setAttackSpeed(float x) {
 	attackSpeed = x;
 }
+
+//zwracaAttackSpeed przeciwnika
 float Enemy::getAttackSpeed() {
 	return attackSpeed;
 }
 
+//ustawia punkty zycia przeciwnika
 void Enemy::setHP(int x) {
 	hp = x;
 	maxHp = x;
 }
 
-void Enemy::setSpriteColor(Color c) {
-	sprite.setColor(c);
-}
-
+//zwraca pozycje sprite'a
 Vector2f Enemy::getSpritePos() {
 	return sprite.getPosition();
 }
 
+//ustawia predkosc ruchu przeciwnika
 void Enemy::setMovespeed(float x) {
 	movespeed = x;
 }
 
+//porusza sprite przeciwnika
 void Enemy::moveSprite(Vector2f movement) {
 	sprite.move(movement);
 }
 
+//zwraca predkosc ruchu przeciwnika
 float Enemy::getMovespeed() {
 	return movespeed;
 }
 
+//sprawdza czy sprite przeciwnika koliduje z innym sprite'em
 bool Enemy::checkCollision(const sf::Sprite& otherSprite) {
 	return sprite.getGlobalBounds().intersects(otherSprite.getGlobalBounds());
 }
 
+//zwraca czas od ostatniego ataku
 float Enemy::getAttackTime() {
 	return attackTimer.getElapsedTime().asMilliseconds() / 1000;
 }
 
+//ustawia obrazenia zadawane przez przeciwnika
 void Enemy::setDamage(int x) {
 	damage = x;
 }
 
+//zwraca obrazenia zadawane przez przeciwnika
 int Enemy::getDamage() const {
 	return damage;
 }
+
+//resetuje timer na podstawie ktorego przeciwnik atakuje
 void Enemy::resetAttackTimer() {
 	attackTimer.restart();
 }
 
+//porusza sprite przeciwnika do tylu
 void Enemy::EnemyPushBack(const Vector2f& pushVec) {
 	sprite.move(pushVec);
 }
 
+//zwraca pozycje sprite'a przeciwnika
 const Vector2f& Enemy::getEnemyPosition() const{
 	return sprite.getPosition();
 }
 
+//ustawia modyfikator trudnosci przeciwnika
 void Enemy::setModifier(float x) {
 	modifier = x;
 }
 
+//zwraca modyfikator trudnosci przeciwnika
 float Enemy::getModifier() {
 	return modifier;
 }
 
+
+//ustawienie podstawowych zmiennych przeciwnika rodzaju Standard
 void StandardEnemy::initVars() {
 	setAttackSpeed(2.5f / modifier);
 	setHP(int(float(100)*modifier));
@@ -180,6 +205,7 @@ void StandardEnemy::initVars() {
 	}
 }
 
+//konstruktor przeciwnika rodzaju Standard
 StandardEnemy::StandardEnemy(Texture* tex, float m) : Enemy(tex, m){
 	initVars();
 	slashTexture.loadFromFile("gfx/slash.png");
@@ -187,6 +213,7 @@ StandardEnemy::StandardEnemy(Texture* tex, float m) : Enemy(tex, m){
 	slashSprite.setOrigin(sprite.getLocalBounds().width/2, sprite.getLocalBounds().height/2);
 }
 
+//porusza przeciwnika rodzaju Standard
 void StandardEnemy::moveEnemy(Vector2f playerpos) {
 	Vector2f direction = playerpos - getSpritePos();
 	float spread = 50.f;
@@ -222,6 +249,7 @@ void StandardEnemy::moveEnemy(Vector2f playerpos) {
 	}
 }
 
+//obsluguje co sie dzieje gdy przeciwnik rodzaju Standard zderzy sie z graczem
 void StandardEnemy::collided(Player& player) {
 	if (getAttackTime() > getAttackSpeed()) {
 		player.takeDamage(getDamage());
@@ -241,6 +269,7 @@ void StandardEnemy::collided(Player& player) {
 	}
 }
 
+//renderowanie ataku przeciwnika rodzaju Standard
 void StandardEnemy::renderEffect(RenderTarget* target) {
 	if (showEffect) {
 		if (effectTimer.getElapsedTime().asSeconds() < 0.3f) {
@@ -252,6 +281,8 @@ void StandardEnemy::renderEffect(RenderTarget* target) {
 	}
 }
 
+
+//ustawienie podstawowych zmiennych przeciwnika rodzaju Tank
 void TankEnemy::initVars() {
 	setAttackSpeed(4.0f / modifier);
 	setHP(int(float(200) * modifier));
@@ -265,6 +296,7 @@ void TankEnemy::initVars() {
 	}
 }
 
+//konstruktor przeciwnika rodzaju Tank
 TankEnemy::TankEnemy(Texture* tex, float m) : Enemy(tex, m) {
 	initVars();
 	slashTexture.loadFromFile("gfx/slash.png");
@@ -273,6 +305,7 @@ TankEnemy::TankEnemy(Texture* tex, float m) : Enemy(tex, m) {
 	slashSprite.setOrigin(texSize.x / 2.f, texSize.y / 2.f);
 }
 
+//porusza przeciwnika rodzaju Tank
 void TankEnemy::moveEnemy(Vector2f playerpos) {
 	Vector2f direction = playerpos - getSpritePos();
 	float spread = 50.f;
@@ -308,6 +341,7 @@ void TankEnemy::moveEnemy(Vector2f playerpos) {
 	}
 }
 
+//obsluguje co sie dzieje gdy przeciwnik rodzaju Tank zderzy sie z graczem
 void TankEnemy::collided(Player& player) {
 	if (getAttackTime() > getAttackSpeed()) {
 		player.takeDamage(getDamage());
@@ -328,6 +362,7 @@ void TankEnemy::collided(Player& player) {
 	}
 }
 
+//renderowanie ataku przeciwnika rodzaju Tank
 void TankEnemy::renderEffect(RenderTarget* target) {
 	if (showEffect) {
 		if (effectTimer.getElapsedTime().asSeconds() < 0.3f) {
@@ -339,6 +374,8 @@ void TankEnemy::renderEffect(RenderTarget* target) {
 	}
 }
 
+
+//ustawienie podstawowych zmiennych przeciwnika rodzaju Range
 void RangeEnemy::initVars() {
 	setAttackSpeed(2.0f / modifier);
 	setHP(int(float(75) * modifier));
@@ -355,11 +392,13 @@ void RangeEnemy::initVars() {
 	}
 }
 
+//konstruktor przeciwnika rodzaju Range
 RangeEnemy::RangeEnemy(Texture* tex, float m) : Enemy(tex, m) {
 	initVars();
 	initBulletTexture(&bulletTexture);
 }
 
+//porusza przeciwnika rodzaju Range
 void RangeEnemy::moveEnemy(Vector2f playerpos) {
 	Vector2f direction = playerpos - getSpritePos();
 	float spread = 50.f;
@@ -410,10 +449,12 @@ void RangeEnemy::moveEnemy(Vector2f playerpos) {
 
 void RangeEnemy::collided(Player& player) {}
 
+//wczytanie tekstury pociskow przeciwnika rodzaju Range
 void RangeEnemy::initBulletTexture(Texture* tex) {
 	bulletTexture.loadFromFile("gfx/EnemyBullet.png");
 }
 
+//ruch pociskow przeciwnika rodzaju Range
 void RangeEnemy::updateBullets() {
 	for(size_t i = 0; i < bullets.size(); ) {
 		bullets[i].update();
@@ -428,16 +469,19 @@ void RangeEnemy::updateBullets() {
 	}
 }
 
+//rysowanie pociskow przeciwnika rodzaju Range na ekran
 void RangeEnemy::renderBullets(RenderTarget* target) {
 	for (auto& bullet : bullets) {
 		bullet.render(target);
 	}
 }
 
+//zwraca pociski przeciwnika rodzaju Range
 std::vector<Bullet>& RangeEnemy::getBullets() {
 	return bullets;
 }
 
+//ustawia predkosc ataku przeciwnika rodzaju range
 void RangeEnemy::setshootCooldown(float x) {
 	shootCooldown = x;
 }
