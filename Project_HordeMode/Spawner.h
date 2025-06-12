@@ -31,5 +31,6 @@ public:
 	void updateWaveBar();
 	void addKilled();
 	void setWaveNumber(int x);
+	int getWaveNumber();
 };
 

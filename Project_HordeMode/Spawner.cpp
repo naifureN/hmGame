@@ -2,8 +2,17 @@
 using namespace sf;
 Font Spawner::font;
 
+//konstruktor spawnera przeciwnikow
 Spawner::Spawner() {
-    font.loadFromFile("gfx/Symtext.ttf");
+    try {
+        if (!this->font.loadFromFile("Fonts/Symtext.ttf")) {
+            throw std::runtime_error("Nie udalo sie zaladowac czcionki: Fonts/Symtext.ttf");
+        }
+    }
+    catch (const std::exception& e) {
+        std::cerr << "Blad ladowania czcionki: " << e.what() << std::endl;
+        exit(EXIT_FAILURE);
+    }
 	EnemyTexture.loadFromFile("gfx/tank.png");
     StandardTexture.loadFromFile("gfx/standard.png");
     RangeTexture.loadFromFile("gfx/range.png");
@@ -11,6 +20,7 @@ Spawner::Spawner() {
 }
 Spawner::~Spawner(){}
 
+//wczytanie podstawowych wartosci paska progressu fali
 void Spawner::initWaveBar() {
     waveBarBackground.setSize(Vector2f(320.f, 10.f));
     waveBarBackground.setFillColor(Color(50, 50, 50));
@@ -27,6 +37,8 @@ void Spawner::initWaveBar() {
     waveText.setString("Wave " + std::to_string(waveNumber));
     waveText.setPosition(Vector2f(1280 / 2 - waveText.getGlobalBounds().width/2, 5));
 }
+
+//aktualizowanie paska progressu fali przeciwnikow
 void Spawner::updateWaveBar() {
     float waveState = 1;
     
@@ -38,6 +50,7 @@ void Spawner::updateWaveBar() {
     waveText.setPosition(Vector2f(1280 / 2 - waveText.getGlobalBounds().width / 2, 3));
 }
 
+//rozpoczecie kolejnej fali
 void Spawner::startNextWave() {
     waveNumber++;
     int r = 0;
@@ -54,6 +67,7 @@ void Spawner::startNextWave() {
     }
 }
 
+//tworzenie przeciwnikow na podstawie obecnej fali
 void Spawner::spawn() {
     if (enemiesSpawned < enemiesToSpawn && float(spawnClock.getElapsedTime().asMilliseconds())/1000 >= spawnInterval) {
         int numTypes = 1;
@@ -81,6 +95,7 @@ void Spawner::spawn() {
     }
 }
 
+//wywolanie aktualizacji dla kazdego przeciwnika
 void Spawner::updateEnemies(Vector2f playerpos, Sprite playerSprite, Player& player) {
     updateWaveBar();
     for (auto& e : enemies) {
@@ -88,6 +103,7 @@ void Spawner::updateEnemies(Vector2f playerpos, Sprite playerSprite, Player& pla
     }
 }
 
+//rysowanie wszystkich przeciwnikow oraz informacji o fali na ekran 
 void Spawner::renderEnemies(RenderWindow* window) {
     for (auto& e : enemies)
         e->render(window);
@@ -96,18 +112,27 @@ void Spawner::renderEnemies(RenderWindow* window) {
     window->draw(waveBarFill);
 }
 
+//zwraca pointer do wektora zawierajacego przeciwnikow
 std::vector<std::unique_ptr<Enemy>>& Spawner::getEnemies() {
     return enemies;
 }
 
+//zwraca czy obecna fala sie zakonczyla
 bool Spawner::isWaveCleared() const {
     return enemiesToSpawn == enemiesSpawned && enemies.empty();
 }
 
+//zwieksza licznik przeciwnikow zabitych w tej fali
 void Spawner::addKilled() {
     killedThisTurn++;
 }
 
+//ustawia numer obecnej fali
 void Spawner::setWaveNumber(int x) {
     waveNumber = x;
+}
+
+//zwraca numer obecnej fali
+int Spawner::getWaveNumber() {
+    return waveNumber;
 }

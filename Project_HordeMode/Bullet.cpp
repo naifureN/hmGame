@@ -1,6 +1,6 @@
 #include "Bullet.h"
 
-Bullet::Bullet(const Texture& bulletTexture, Vector2f playerPos, Vector2f mousepos): damage(25){
+Bullet::Bullet(const Texture& bulletTexture, Vector2f playerPos, Vector2f mousepos, int dmg): damage(dmg){
 	this->sprite.setTexture(bulletTexture);
 	this->initVars();
 	this->setPosition(playerPos);

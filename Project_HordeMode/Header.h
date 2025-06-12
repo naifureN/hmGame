@@ -36,6 +36,7 @@ private:
 	float shootDelay;
 	bool runningbool = true;
 	bool mouseLeftPressedLastFrame;
+	float damageModifier = 1.f;
 	bool inUpgrade = false;
 	
 	
