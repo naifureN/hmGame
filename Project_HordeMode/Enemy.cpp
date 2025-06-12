@@ -77,7 +77,12 @@ void Enemy::updateHpBar() {
 	}
 
 	float hpPercent = static_cast<float>(hp) / maxHp;
-	hpPercent = std::clamp(hpPercent, 0.f, 1.f);
+	if (hpPercent < 0) {
+		hpPercent = 0;
+	}
+	if (hpPercent > 1) {
+		hpPercent = 1;
+	}
 	hpBarFill.setSize(Vector2f(32 * hpPercent, 5));
 
 	if (hpPercent < 0.3) {
