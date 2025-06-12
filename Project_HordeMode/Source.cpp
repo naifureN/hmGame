@@ -4,7 +4,7 @@ using namespace std;
 //Funs
 
 void Game::initWindow() {
-	this->window.create(sf::VideoMode(1280, 720), "Horda Kurwiu", Style::Titlebar | Style::Close);
+	this->window.create(sf::VideoMode(1280, 720), "Czarodziej Bartjociechus", Style::Titlebar | Style::Close);
 	this->window.setFramerateLimit(60);
 }
 
@@ -13,7 +13,7 @@ void Game::initVars() {
 	this->endGame = false;
 	this->showControls = false;
 	//HI_______------------------------------------------------
-	this->shootDelay = 3.f;
+	this->shootDelay = 0.5f;
 	this->bulletTexture.loadFromFile("gfx/bullet.png");
 	this->mouseLeftPressedLastFrame = false;
 	this->backgroundTexture.loadFromFile("gfx/background.png");
@@ -178,10 +178,6 @@ void Game::pollEvents() {
 				runningbool = false;
 				this->window.close();
 			}
-			if (this->evnt.key.code == Keyboard::L) {
-				this->inUpgrade = true;
-				initUpgradeButtons();
-			}
 			if (this->evnt.key.code == sf::Keyboard::G) {
 				this->endGame=true;
 			}
@@ -292,6 +288,10 @@ void Game::update() {
 		this->spawner.spawn();
 		if (this->spawner.isWaveCleared()) {
 			this->spawner.startNextWave();
+			if (this->spawner.getWaveNumber() > 1) {
+				this->inUpgrade = true;
+				this->initUpgradeButtons();
+			}
 		}
 		for (auto& enemy : spawner.getEnemies()) {
 			if (checkCollisionWithObstacles(enemy->getBounds())) {
@@ -301,7 +301,7 @@ void Game::update() {
 				if (len != 0)
 					dir /= len;
 
-				// Cofamy po kroku a¿ wyjdzie z kolizji
+				// Cofamy po kroku az wyjdzie z kolizji
 				const float maxPush = 10.f;
 				const float step = 0.5f;
 
@@ -455,7 +455,7 @@ bool Game::checkRotatedCollision(const std::unique_ptr<sf::RectangleShape>& rect
 void Game::shoot() {
 	if (shootClock.getElapsedTime().asSeconds() >= shootDelay) {
 		Vector2i mousepos = Mouse::getPosition(window);
-		bullets.emplace_back(std::make_unique<Bullet>(bulletTexture, player.getPos(), Vector2f(mousepos)));
+		bullets.emplace_back(std::make_unique<Bullet>(bulletTexture, player.getPos(), Vector2f(mousepos), int(float(25)*damageModifier)));
 		shootClock.restart();
 	}
 }
@@ -526,7 +526,7 @@ void Game::updateUpgradeButtons() {
 					shootDelay = std::max(shootDelay - 0.1f, 0.05f);
 				}
 				else if (text == "MORE DAMAGE") {
-					cout<<"DZIALANIE UPGRADE MORE DAMAGE"; // zakładamy że coś takiego zrobisz
+					damageModifier += 0.325f;
 				}
 
 				inUpgrade = false; // wyłącz upgrade

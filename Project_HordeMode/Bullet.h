@@ -10,7 +10,7 @@ class Bullet {
 	void initVars();
 
 public:
-	Bullet(const Texture& bulletTexture, Vector2f playerPos, Vector2f mousepos);
+	Bullet(const Texture& bulletTexture, Vector2f playerPos, Vector2f mousepos, int dmg=25);
 	Bullet() = delete;
 	~Bullet();
 

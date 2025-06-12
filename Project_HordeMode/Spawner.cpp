@@ -119,3 +119,7 @@ void Spawner::addKilled() {
 void Spawner::setWaveNumber(int x) {
     waveNumber = x;
 }
+
+int Spawner::getWaveNumber() {
+    return waveNumber;
+}

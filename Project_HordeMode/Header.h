@@ -33,6 +33,7 @@ private:
 	float shootDelay;
 	bool runningbool = true;
 	bool mouseLeftPressedLastFrame;
+	float damageModifier = 1.f;
 	//TYMCZASOWE-----------------------------------------------
 	bool inUpgrade = false;
 	sf::RectangleShape upgradeOverlay;
