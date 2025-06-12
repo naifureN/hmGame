@@ -3,7 +3,15 @@ using namespace sf;
 Font Spawner::font;
 
 Spawner::Spawner() {
-    font.loadFromFile("gfx/Symtext.ttf");
+    try {
+        if (!this->font.loadFromFile("Fonts/Symtext.ttf")) {
+            throw std::runtime_error("Nie udalo sie zaladowac czcionki: Fonts/Symtext.ttf");
+        }
+    }
+    catch (const std::exception& e) {
+        std::cerr << "Blad ladowania czcionki: " << e.what() << std::endl;
+        exit(EXIT_FAILURE);
+    }
 	EnemyTexture.loadFromFile("gfx/tank.png");
     StandardTexture.loadFromFile("gfx/standard.png");
     RangeTexture.loadFromFile("gfx/range.png");

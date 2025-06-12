@@ -29,9 +29,18 @@ void Game::initVars() {
 	initObstacles();
 }
 
-void Game::initFonts(){
-	this->font.loadFromFile("Fonts/Symtext.ttf");
+void Game::initFonts() {
+	try {
+		if (!this->font.loadFromFile("Fonts/Symtext.ttf")) {
+			throw std::runtime_error("Nie udalo sie zaladowac czcionki: Fonts/Symtext.ttf");
+		}
+	}
+	catch (const std::exception& e) {
+		std::cerr << "Blad ladowania czcionki: " << e.what() << std::endl;
+		exit(EXIT_FAILURE);
+	}
 }
+
 
 void Game::initText() {
 	// --- HORDE MODE ---
@@ -319,8 +328,7 @@ void Game::update() {
 }
 	
 
-void Game::renderButtons()
-{
+void Game::renderButtons() {
 	for (auto& button : buttons) {
 		button->render(&window);
 	}

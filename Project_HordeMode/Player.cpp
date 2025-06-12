@@ -22,7 +22,15 @@ void Player::initHpBar() {
 	playerhpBarFill.setSize(sf::Vector2f(200.f, 20.f));
 	playerhpBarFill.setFillColor(sf::Color::Green);
 
-	font.loadFromFile("gfx/Symtext.ttf");
+	try {
+		if (!this->font.loadFromFile("Fonts/Symtext.ttf")) {
+			throw std::runtime_error("Nie udalo sie zaladowac czcionki: Fonts/Symtext.ttf");
+		}
+	}
+	catch (const std::exception& e) {
+		std::cerr << "Blad ladowania czcionki: " << e.what() << std::endl;
+		exit(EXIT_FAILURE);
+	}
 
 	hpText.setFont(font);
 	hpText.setCharacterSize(18);
