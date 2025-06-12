@@ -570,6 +570,7 @@ void Game::updateUpgradeButtons() {
 				//DZIALANIE KONKRETNYCH ULEPSZEN
 				if (text == "MORE HP") {
 					player.setMaxHp(player.getMaxHp() + 20);
+					player.setHp(player.getHp() + 20);
 				}
 				else if (text == "FASTER BULLETS") {
 					shootDelay = std::max(shootDelay - 0.1f, 0.05f);
