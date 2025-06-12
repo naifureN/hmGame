@@ -33,12 +33,18 @@ private:
 	float shootDelay;
 	bool runningbool = true;
 	bool mouseLeftPressedLastFrame;
+	//TYMCZASOWE-----------------------------------------------
+	bool inUpgrade = false;
+	sf::RectangleShape upgradeOverlay;
+	std::vector<std::unique_ptr<Button>> upgradeButtons;
+	//TYMCZASOwe----------------------------------
 
 	void initWindow();
 	void initVars();
 	void initFonts();
 	void initText();
 	void initButtons(bool startMode=false);
+	void initUpgradeButtons();
 
 	std::vector<std::unique_ptr<RectangleShape>> obstacles;
 	void initObstacles();
@@ -66,6 +72,7 @@ public:
 	bool checkRotatedCollision(const std::unique_ptr<sf::RectangleShape>& rect, const sf::FloatRect& bounds) const;
 
 	void updatePotions();
+	void updateUpgradeButtons();
 	void createPotion(Vector2f position);
 	void shoot();
 	void updateBullets();
